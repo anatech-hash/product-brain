@@ -1,644 +1,351 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Brain · Leadtech</title>
+<title>Product Brain · Dashboard Q3 2026</title>
 <style>
-  :root {
-    --bg:#0c0c0f;--surface:#131318;--surface2:#1a1a22;--surface3:#22222e;
-    --border:#2a2a38;--border-light:#333344;
-    --pass:#4f8ef7;--pass-dim:rgba(79,142,247,.12);--pass-border:rgba(79,142,247,.25);
-    --ease:#34d399;--ease-dim:rgba(52,211,153,.12);--ease-border:rgba(52,211,153,.25);
-    --text:#e2e2ee;--text2:#9999b8;--text3:#666680;
-    --red:#f87171;--yellow:#fbbf24;--green:#34d399;--purple:#a78bfa;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:13px;line-height:1.5;min-height:100vh;display:flex}
-  /* SIDEBAR */
-  #sidebar{width:220px;min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:10}
-  .logo{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
-  .logo-mark{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.3px}
-  .logo-sub{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.5px;text-transform:uppercase}
-  .product-switcher{padding:12px 12px 8px;border-bottom:1px solid var(--border)}
-  .switcher-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:0 6px;margin-bottom:6px}
-  .switcher-btn{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;border-radius:7px;border:none;background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all .15s;text-align:left;margin-bottom:2px}
-  .switcher-btn:hover{background:var(--surface2);color:var(--text)}
-  .switcher-btn.active-pass{background:var(--pass-dim);color:var(--pass);border:1px solid var(--pass-border)}
-  .switcher-btn.active-ease{background:var(--ease-dim);color:var(--ease);border:1px solid var(--ease-border)}
-  .switcher-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-  .dot-pass{background:var(--pass)}.dot-ease{background:var(--ease)}.dot-both{background:linear-gradient(135deg,var(--pass) 50%,var(--ease) 50%)}
-  .nav-section{padding:12px 12px 4px;flex:1;overflow-y:auto}
-  .nav-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:0 6px;margin-bottom:4px;margin-top:10px}
-  .nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;color:var(--text2);font-size:12px;transition:all .15s;margin-bottom:1px}
-  .nav-item:hover{background:var(--surface2);color:var(--text)}
-  .nav-item.active{background:var(--surface3);color:var(--text)}
-  .nav-icon{font-size:14px;width:18px;text-align:center}
-  .sidebar-footer{padding:12px;border-top:1px solid var(--border)}
-  .last-sync{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:5px}
-  .sync-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
-  /* MAIN */
-  #main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
-  #topbar{height:52px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--surface);position:sticky;top:0;z-index:5}
-  .topbar-left{display:flex;align-items:center;gap:10px}
-  .page-title{font-size:14px;font-weight:600;color:var(--text)}
-  .product-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.4px}
-  .badge-pass{background:var(--pass-dim);color:var(--pass);border:1px solid var(--pass-border)}
-  .badge-ease{background:var(--ease-dim);color:var(--ease);border:1px solid var(--ease-border)}
-  .badge-all{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
-  .ask-btn{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#4f8ef7,#a78bfa);color:white;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .15s}
-  .ask-btn:hover{opacity:.88}
-  /* CONTENT */
-  #content{padding:24px;flex:1}
-  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .section-title{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
-  .section-icon{font-size:15px}
-  .refresh-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
-  .refresh-btn:hover{background:var(--surface3);color:var(--text)}
-  .refresh-btn:disabled{opacity:.4;cursor:not-allowed}
-  .spinning{animation:spin 1s linear infinite;display:inline-block}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:24px}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .15s}
-  .card:hover{border-color:var(--border-light)}
-  .card-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px}
-  .card-value{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.5px;line-height:1.2}
-  .card-meta{font-size:11px;color:var(--text2);margin-top:4px}
-  .card-delta{font-size:11px;font-weight:600;margin-top:6px}
-  .delta-up{color:var(--green)}.delta-down{color:var(--red)}.delta-flat{color:var(--text3)}
-  .content-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden}
-  .block-body{padding:16px;font-size:12px;color:var(--text2);line-height:1.7;min-height:60px}
-  .block-body.loading{display:flex;align-items:center;gap:8px;color:var(--text3)}
-  .loading-bar{height:3px;background:linear-gradient(90deg,var(--pass),var(--ease));border-radius:2px;animation:load 1.5s ease-in-out infinite;width:40%}
-  @keyframes load{0%{width:0%;opacity:1}50%{width:80%;opacity:.7}100%{width:100%;opacity:0}}
-  .okr-objective{margin-bottom:16px}
-  .okr-obj-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-  .okr-kr{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px}
-  .okr-kr:last-child{border-bottom:none}
-  .kr-progress{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;min-width:80px}
-  .kr-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--pass),var(--purple));transition:width .6s ease}
-  .kr-pct{font-size:10px;font-weight:600;color:var(--text2);width:30px;text-align:right}
-  .alert-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
-  .alert-item:last-child{border-bottom:none}
-  .alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
-  .alert-high{background:var(--red)}.alert-med{background:var(--yellow)}.alert-low{background:var(--green)}
-  .alert-body{flex:1}
-  .alert-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px}
-  .alert-desc{font-size:11px;color:var(--text2)}
-  .alert-tag{font-size:9px;padding:1px 6px;border-radius:3px;background:var(--surface3);color:var(--text3);margin-left:auto;flex-shrink:0;align-self:flex-start}
-  .opp-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
-  .opp-item:last-child{border-bottom:none}
-  .opp-rank{font-size:11px;font-weight:700;color:var(--text3);width:18px;flex-shrink:0;margin-top:1px}
-  .opp-content{flex:1}
-  .opp-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:3px}
-  .opp-desc{font-size:11px;color:var(--text2)}
-  .opp-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
-  .tag{font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;letter-spacing:.3px}
-  .tag-impact{background:rgba(167,139,250,.15);color:var(--purple)}
-  .tag-effort{background:var(--surface3);color:var(--text3)}
-  .tag-nsm{background:rgba(251,191,36,.12);color:var(--yellow)}
-  .roadmap-item{display:flex;gap:14px;padding:10px 0;border-bottom:1px solid var(--border);align-items:flex-start}
-  .roadmap-item:last-child{border-bottom:none}
-  .roadmap-status{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;width:60px;flex-shrink:0;margin-top:2px}
-  .status-live{color:var(--green)}.status-build{color:var(--yellow)}.status-next{color:var(--pass)}
-  .roadmap-content{flex:1}
-  .roadmap-title{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px}
-  .roadmap-desc{font-size:11px;color:var(--text2)}
-  /* ASK PANEL */
-  #ask-panel{display:none;position:fixed;top:0;right:0;bottom:0;width:420px;background:var(--surface);border-left:1px solid var(--border);z-index:50;flex-direction:column;box-shadow:-8px 0 32px rgba(0,0,0,.4)}
-  #ask-panel.open{display:flex}
-  .ask-header{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-  .ask-title{font-size:14px;font-weight:600;background:linear-gradient(135deg,var(--pass),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-  .close-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
-  .close-btn:hover{color:var(--text)}
-  .ask-context-bar{padding:8px 16px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;color:var(--text3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  .context-chip{background:var(--surface3);border:1px solid var(--border);border-radius:3px;padding:1px 6px;color:var(--text2);font-size:10px}
-  #chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px}
-  .msg{display:flex;gap:8px;align-items:flex-start}
-  .msg-avatar{width:24px;height:24px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
-  .avatar-user{background:var(--surface3);color:var(--text2)}
-  .avatar-ai{background:linear-gradient(135deg,var(--pass),var(--purple));color:white}
-  .msg-body{flex:1;font-size:12px;line-height:1.65;color:var(--text2)}
-  .msg-body.user-msg{color:var(--text)}
-  .msg-body strong{color:var(--text)}
-  .msg-body ul{padding-left:16px;margin:6px 0}
-  .msg-body li{margin-bottom:3px}
-  .thinking{display:flex;gap:4px;align-items:center;padding:4px 0}
-  .thinking span{width:5px;height:5px;border-radius:50%;background:var(--text3);animation:bounce 1.2s ease-in-out infinite}
-  .thinking span:nth-child(2){animation-delay:.2s}
-  .thinking span:nth-child(3){animation-delay:.4s}
-  @keyframes bounce{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1);opacity:1}}
-  .quick-prompts{padding:10px 16px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid var(--border)}
-  .quick-chip{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:4px 10px;font-size:11px;color:var(--text2);cursor:pointer;transition:all .15s}
-  .quick-chip:hover{background:var(--surface3);color:var(--text);border-color:var(--border-light)}
-  .ask-input-area{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end}
-  #ask-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:inherit;resize:none;outline:none;min-height:38px;max-height:120px;line-height:1.5;transition:border-color .15s}
-  #ask-input:focus{border-color:var(--pass)}
-  #ask-input::placeholder{color:var(--text3)}
-  .send-btn{background:linear-gradient(135deg,var(--pass),var(--purple));border:none;border-radius:7px;width:34px;height:34px;cursor:pointer;color:white;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
-  .send-btn:hover{opacity:.85}
-  .send-btn:disabled{opacity:.3;cursor:not-allowed}
-  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;color:var(--text3);font-size:12px;gap:8px;text-align:center}
-  .empty-icon{font-size:28px}
-  .view-section{display:none}
-  .view-section.active{display:block}
-  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:800px){.two-col{grid-template-columns:1fr}#sidebar{width:100%;min-height:auto;position:relative}#main{margin-left:0}}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #0d1117; color: #e6edf3; padding: 16px; font-size: 13px; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #21262d; padding-bottom: 12px; }
+  .header h1 { font-size: 16px; color: #f0f6fc; font-weight: 700; }
+  .header .meta { font-size: 11px; color: #8b949e; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-green { background: #1a4a1a; color: #56d364; }
+  .badge-red { background: #4a1a1a; color: #f85149; }
+  .badge-yellow { background: #4a3a00; color: #e3b341; }
+  .badge-blue { background: #1a2a4a; color: #79c0ff; }
+  .badge-gray { background: #21262d; color: #8b949e; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .card { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 14px; }
+  .card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #8b949e; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .product-tag-p { color: #79c0ff; font-weight: 700; }
+  .product-tag-e { color: #d2a8ff; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 10px; text-transform: uppercase; color: #8b949e; border-bottom: 1px solid #21262d; padding: 4px 6px; text-align: left; font-weight: 600; }
+  td { padding: 5px 6px; border-bottom: 1px solid #161b22; font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .kpi-item { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 8px 10px; }
+  .kpi-label { font-size: 10px; color: #8b949e; margin-bottom: 2px; }
+  .kpi-value { font-size: 18px; font-weight: 700; color: #f0f6fc; }
+  .kpi-delta { font-size: 10px; margin-top: 2px; }
+  .delta-down { color: #f85149; }
+  .delta-up { color: #56d364; }
+  .delta-warn { color: #e3b341; }
+  .alert-list { list-style: none; }
+  .alert-list li { padding: 6px 8px; border-radius: 6px; margin-bottom: 6px; font-size: 12px; display: flex; align-items: flex-start; gap: 8px; }
+  .alert-red { background: #2d0f0f; border-left: 3px solid #f85149; }
+  .alert-yellow { background: #2d1f00; border-left: 3px solid #e3b341; }
+  .alert-blue { background: #0d1f3c; border-left: 3px solid #79c0ff; }
+  .roadmap-row { display: flex; gap: 6px; }
+  .roadmap-col { flex: 1; }
+  .roadmap-col-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; text-align: center; padding: 3px; border-bottom: 2px solid; }
+  .live-title { border-color: #56d364; color: #56d364; }
+  .build-title { border-color: #e3b341; color: #e3b341; }
+  .next-title { border-color: #79c0ff; color: #79c0ff; }
+  .roadmap-item { background: #0d1117; border: 1px solid #21262d; border-radius: 5px; padding: 6px 8px; margin-bottom: 5px; font-size: 11px; line-height: 1.4; }
+  .roadmap-item .ri-label { color: #8b949e; font-size: 10px; }
+  .opp-item { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; display: flex; gap: 10px; align-items: flex-start; }
+  .opp-num { font-size: 28px; font-weight: 700; flex-shrink: 0; width: 32px; text-align: center; }
+  .opp-title { font-size: 12px; font-weight: 600; color: #f0f6fc; margin-bottom: 2px; }
+  .opp-desc { font-size: 11px; color: #8b949e; line-height: 1.4; }
+  .opp-nsm { font-size: 10px; margin-top: 4px; }
+  .intel-item { border-left: 3px solid #30363d; padding: 4px 8px; margin-bottom: 8px; font-size: 12px; }
+  .intel-source { font-size: 10px; color: #8b949e; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .tab { padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; border: 1px solid #21262d; background: #161b22; color: #8b949e; }
+  .tab.active-p { background: #1a2a4a; color: #79c0ff; border-color: #79c0ff; }
+  .tab.active-e { background: #2a1a4a; color: #d2a8ff; border-color: #d2a8ff; }
+  .tab.active-both { background: #1a3a2a; color: #56d364; border-color: #56d364; }
+  .pane { display: none; }
+  .pane.active { display: block; }
+  .ticket-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  .ticket-bar-label { font-size: 11px; color: #8b949e; min-width: 100px; }
+  .ticket-bar-track { flex: 1; background: #21262d; border-radius: 3px; height: 10px; overflow: hidden; }
+  .ticket-bar-fill { height: 100%; border-radius: 3px; }
+  .ticket-bar-count { font-size: 11px; font-weight: 700; min-width: 30px; text-align: right; }
+  .gap-warning { background: #2d1f00; border: 1px dashed #e3b341; border-radius: 6px; padding: 8px 10px; font-size: 11px; color: #e3b341; margin-bottom: 8px; }
+  .gap-warning strong { display: block; margin-bottom: 2px; }
+  .full-width { grid-column: 1 / -1; }
+  .data-source { font-size: 10px; color: #30363d; text-align: right; margin-top: 8px; }
+  code { background: #21262d; padding: 1px 4px; border-radius: 3px; font-family: monospace; font-size: 10px; }
 </style>
 </head>
 <body>
-
-<nav id="sidebar">
-  <div class="logo">
-    <div class="logo-mark">Product Brain</div>
-    <div class="logo-sub">Leadtech · PM Intelligence</div>
+<div class="header">
+  <div>
+    <h1>🧠 Product Brain · Dashboard Sincronizado</h1>
+    <div class="meta">Passports (mypassporthub.com) &amp; EaseGov (easegov.com) · 4 Jul 2026</div>
   </div>
-  <div class="product-switcher">
-    <div class="switcher-label">Product</div>
-    <button class="switcher-btn active-pass" onclick="switchProduct('passports',this)"><span class="switcher-dot dot-pass"></span>Passports</button>
-    <button class="switcher-btn" onclick="switchProduct('easegov',this)"><span class="switcher-dot dot-ease"></span>EaseGov</button>
-    <button class="switcher-btn" onclick="switchProduct('all',this)"><span class="switcher-dot dot-both"></span>All Products</button>
+  <div><span class="badge badge-green">Sincronizado</span> <span class="badge badge-gray" style="margin-left:6px;">Drive + Tickets Mayo 2026</span></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active-both" onclick="showTab('overview',this,'active-both')">🌐 Overview</button>
+  <button class="tab" onclick="showTab('passports',this,'active-p')">🛂 Passports</button>
+  <button class="tab" onclick="showTab('easegov',this,'active-e')">🏛️ EaseGov</button>
+  <button class="tab" onclick="showTab('intel',this,'active-p')">🔭 Intel &amp; Radar</button>
+  <button class="tab" onclick="showTab('opp',this,'active-both')">🎯 Oportunidades</button>
+</div>
+
+<!-- OVERVIEW -->
+<div id="pane-overview" class="pane active">
+  <div class="gap-warning">
+    <strong>⚠️ GAPS DE SINCRONIZACIÓN DETECTADOS EN DRIVE</strong>
+    Carpetas vacías: <code>03_metricas_arbol_de_kpis/</code> · <code>03_metricas/roadmap/</code> · <code>04_mercado/competitive Intelligence/Passports/</code> · <code>07_Feedback/Passports/</code> · <code>07_Feedback/EaseGov/</code>. Datos construidos desde: project knowledge (docx), tickets Mayo 2026, radar EaseGov Drive (activo) y contexto de memoria.
   </div>
-  <div class="nav-section">
-    <div class="nav-label">Overview</div>
-    <div class="nav-item active" onclick="showView('overview',this)"><span class="nav-icon">⌂</span>Command Centre</div>
-    <div class="nav-label">Discovery</div>
-    <div class="nav-item" onclick="showView('okrs',this)"><span class="nav-icon">◎</span>Q Objectives</div>
-    <div class="nav-item" onclick="showView('opportunities',this)"><span class="nav-icon">◈</span>Opportunities</div>
-    <div class="nav-item" onclick="showView('competitive',this)"><span class="nav-icon">◉</span>Market & Competitive</div>
-    <div class="nav-label">Delivery</div>
-    <div class="nav-item" onclick="showView('kpis',this)"><span class="nav-icon">▦</span>Product KPIs</div>
-    <div class="nav-item" onclick="showView('roadmap',this)"><span class="nav-icon">→</span>Roadmap</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="product-tag-p">PASSPORTS</span> NSM — Aplicaciones completadas/semana sin refund ni CB</div>
+      <div class="kpi-grid">
+        <div class="kpi-item"><div class="kpi-label">CR end-to-end MPH</div><div class="kpi-value">5.7%</div><div class="kpi-delta delta-warn">Baseline sem.18 May · fue 1.9% en Mar26</div></div>
+        <div class="kpi-item"><div class="kpi-label">Tráfico MPH YoY</div><div class="kpi-value">−93%</div><div class="kpi-delta delta-down">461k → 31k (Mar25→Mar26)</div></div>
+        <div class="kpi-item"><div class="kpi-label">Refunds Mayo</div><div class="kpi-value">181</div><div class="kpi-delta delta-warn">43% total tickets Passports</div></div>
+        <div class="kpi-item"><div class="kpi-label">ARPU ref.</div><div class="kpi-value">~136€</div><div class="kpi-delta">Dic 2025 · alerta &lt;120€</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="product-tag-e">EASEGOV</span> NSM — Usuarios Premium con ≥1 servicio completo / 30 días</div>
+      <div class="kpi-grid">
+        <div class="kpi-item"><div class="kpi-label">Refunds Mayo</div><div class="kpi-value">186</div><div class="kpi-delta delta-down">55% total tickets · nivel crítico</div></div>
+        <div class="kpi-item"><div class="kpi-label">Confusión gov/priv.</div><div class="kpi-value">141</div><div class="kpi-delta delta-down">42% tickets EaseGov Mayo</div></div>
+        <div class="kpi-item"><div class="kpi-label">Drop crítico</div><div class="kpi-value">/processing</div><div class="kpi-delta delta-warn">Deploy 28 May · DS-11 Expedited</div></div>
+        <div class="kpi-item"><div class="kpi-label">Estado MVP</div><div class="kpi-value">Live</div><div class="kpi-delta delta-up">Lanzado Mar 2026 · 4 servicios</div></div>
+      </div>
+    </div>
   </div>
-  <div class="sidebar-footer">
-    <div class="last-sync"><span class="sync-dot"></span>Google Drive · archivo más reciente</div>
-  </div>
-</nav>
-
-<div id="main">
-  <div id="topbar">
-    <div class="topbar-left">
-      <div class="page-title" id="page-title">Command Centre</div>
-      <div class="product-badge badge-pass" id="product-badge">Passports</div>
-    </div>
-    <button class="ask-btn" onclick="openAsk()">✦ Ask the Product Brain</button>
-  </div>
-
-  <div id="content">
-
-    <!-- OVERVIEW -->
-    <div id="view-overview" class="view-section active">
-      <div id="overview-loading" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;padding:16px;display:flex;align-items:center;gap:8px;color:var(--text3)">
-        <span>Cargando desde Google Drive…</span><div class="loading-bar"></div>
-      </div>
-      <div id="overview-content" style="display:none">
-        <div class="cards-grid" id="kpi-cards"></div>
-        <div class="two-col">
-          <div>
-            <div class="section-header">
-              <div class="section-title"><span class="section-icon">⚠</span>Active Alerts</div>
-              <button class="refresh-btn" onclick="loadOverview()">↻ Refresh</button>
-            </div>
-            <div class="content-block"><div class="block-body" id="alerts-body"></div></div>
-          </div>
-          <div>
-            <div class="section-header"><div class="section-title"><span class="section-icon">◎</span>Q Focus</div></div>
-            <div class="content-block"><div class="block-body" id="focus-body"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- OKRs -->
-    <div id="view-okrs" class="view-section">
-      <div class="section-header">
-        <div class="section-title"><span class="section-icon">◎</span>Q Objectives & Key Results</div>
-        <button class="refresh-btn" id="okr-refresh-btn" onclick="loadOKRs()">↻ Sync from Drive</button>
-      </div>
-      <div class="content-block"><div class="block-body" id="okrs-body"><div class="empty-state"><div class="empty-icon">◎</div>Pulsa "Sync from Drive" para cargar OKRs</div></div></div>
-    </div>
-
-    <!-- OPPORTUNITIES -->
-    <div id="view-opportunities" class="view-section">
-      <div class="section-header">
-        <div class="section-title"><span class="section-icon">◈</span>Opportunities & Prioritization</div>
-        <button class="refresh-btn" id="opp-refresh-btn" onclick="loadOpportunities()">↻ Sync from Drive</button>
-      </div>
-      <div class="content-block"><div class="block-body" id="opp-body"><div class="empty-state"><div class="empty-icon">◈</div>Pulsa "Sync from Drive" para cargar oportunidades</div></div></div>
-    </div>
-
-    <!-- COMPETITIVE -->
-    <div id="view-competitive" class="view-section">
-      <div class="section-header">
-        <div class="section-title"><span class="section-icon">◉</span>Market & Competitive</div>
-        <button class="refresh-btn" id="comp-refresh-btn" onclick="loadCompetitive()">↻ Sync from Drive</button>
-      </div>
-      <div class="content-block"><div class="block-body" id="comp-body"><div class="empty-state"><div class="empty-icon">◉</div>Pulsa "Sync from Drive" para cargar competitive intel</div></div></div>
-    </div>
-
-    <!-- KPIs -->
-    <div id="view-kpis" class="view-section">
-      <div class="section-header">
-        <div class="section-title"><span class="section-icon">▦</span>Product KPIs</div>
-        <button class="refresh-btn" id="kpi-refresh-btn" onclick="loadKPIs()">↻ Sync from Drive</button>
-      </div>
-      <div class="content-block"><div class="block-body" id="kpis-body"><div class="empty-state"><div class="empty-icon">▦</div>Pulsa "Sync from Drive" para cargar KPIs</div></div></div>
-    </div>
-
-    <!-- ROADMAP -->
-    <div id="view-roadmap" class="view-section">
-      <div class="section-header">
-        <div class="section-title"><span class="section-icon">→</span>Roadmap & Next Milestones</div>
-        <button class="refresh-btn" id="road-refresh-btn" onclick="loadRoadmap()">↻ Sync from Drive</button>
-      </div>
-      <div class="content-block"><div class="block-body" id="roadmap-body"><div class="empty-state"><div class="empty-icon">→</div>Pulsa "Sync from Drive" para cargar el roadmap</div></div></div>
-    </div>
-
+  <div class="card">
+    <div class="card-title">🚨 ALERTAS ACTIVAS — Ambos productos</div>
+    <ul class="alert-list">
+      <li class="alert-red">🔴 <div><strong>Passports:</strong> Caída tráfico −93% YoY en MPH. CR funnel parcialmente recuperado (5.7% sem.18 May) pero base es mínima. Causas: desactivación AMEX/Capital One + competidor mypassportcenter + subida precios.</div></li>
+      <li class="alert-red">🔴 <div><strong>EaseGov:</strong> Drop severo en <code>/processing-method</code> desde deploy 28 May (DS-11 Expedited). Afecta todos los dispositivos. Riesgo de impacto en NSM.</div></li>
+      <li class="alert-red">🔴 <div><strong>EaseGov:</strong> 141 tickets confusión gobierno/privado en Mayo (42% total). Tasa refund 55% — nivel crítico para retención y NSM.</div></li>
+      <li class="alert-yellow">🟡 <div><strong>Passports:</strong> 42 tickets "link expirado". Fricción post-compra recurrente que podría relacionarse con abandono antes de enviar formulario.</div></li>
+      <li class="alert-yellow">🟡 <div><strong>Passports Mobile Google:</strong> CR mobile estructuralmente débil. Podría estar relacionado con nueva campaña SEM (baja intención). Requiere baseline limpio antes de A/B test.</div></li>
+      <li class="alert-blue">🔵 <div><strong>Externo:</strong> State Dept lanzó "Patriot Passport" (250 aniv. EEUU) desde 6 Jul, solo presencial en D.C. No afecta tiempos estándar. Podría generar búsquedas informativas.</div></li>
+    </ul>
   </div>
 </div>
 
-<!-- ASK PANEL -->
-<div id="ask-panel">
-  <div class="ask-header">
-    <div class="ask-title">✦ Ask the Product Brain</div>
-    <button class="close-btn" onclick="closeAsk()">✕</button>
-  </div>
-  <div class="ask-context-bar">
-    Contexto: <span class="context-chip" id="ask-context-chip">Passports</span>
-    <span class="context-chip">Google Drive</span>
-    <span class="context-chip">Archivo más reciente</span>
-  </div>
-  <div id="chat-messages">
-    <div class="msg">
-      <div class="msg-avatar avatar-ai">✦</div>
-      <div class="msg-body">Hola, soy el Product Brain de Leadtech. Accedo a Google Drive y siempre uso el archivo más reciente de cada carpeta.<br><br>¿Qué necesitas analizar?</div>
+<!-- PASSPORTS -->
+<div id="pane-passports" class="pane">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="product-tag-p">PASSPORTS</span> KPIs por site (Baseline sem.18 May 2026)</div>
+      <table>
+        <thead><tr><th>Site</th><th>CR Step1</th><th>CR E2E</th><th>CR Rev→Pay</th><th>CR Pay→TY</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>mypassporthub.com</td><td>25.2%</td><td>5.7%</td><td>—</td><td>—</td><td><span class="badge badge-yellow">⚠️ Bajo</span></td></tr>
+          <tr><td>primeusaprocessors</td><td>29.1%</td><td>4.7%</td><td>73.1%</td><td>26.9%</td><td><span class="badge badge-yellow">⚠️</span></td></tr>
+          <tr><td>trustedtravelportal</td><td>34.3%</td><td>7.8%</td><td>72.4%</td><td>38.1%</td><td><span class="badge badge-green">✓</span></td></tr>
+          <tr><td>cleartripservices</td><td>33.2%</td><td>7.4%</td><td>76.4%</td><td>36.9%</td><td><span class="badge badge-green">✓</span></td></tr>
+          <tr><td style="color:#79c0ff;font-weight:700">Target</td><td style="color:#79c0ff">&gt;35%</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div class="data-source">Fuente: QlikSense / estado_actual.docx</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="product-tag-p">PASSPORTS</span> Google vs Bing (acum. Mar25–Mar26)</div>
+      <table>
+        <thead><tr><th>Paso</th><th>Google</th><th>Bing</th></tr></thead>
+        <tbody>
+          <tr><td>Step 1</td><td>654.837</td><td>454.323</td></tr>
+          <tr><td>Contacto</td><td>28.2%</td><td>40.6%</td></tr>
+          <tr><td>Review</td><td>21.1%</td><td>31.7%</td></tr>
+          <tr><td>Payment</td><td>16.7%</td><td>24.7%</td></tr>
+          <tr><td><strong>CR Total</strong></td><td><strong style="color:#f85149">6.19%</strong></td><td><strong style="color:#56d364">9.91%</strong></td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:11px; color:#e3b341; margin-top:8px;">⚡ Bing convierte ~60% más. Google = volumen mayor, intención menor.</div>
+    </div>
+    <div class="card full-width">
+      <div class="card-title"><span class="product-tag-p">PASSPORTS</span> Tickets soporte Mayo 2026 (420 total)</div>
+      <div style="margin-bottom:12px;">
+        <div class="ticket-bar"><span class="ticket-bar-label">Refund</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:43%; background:#f85149;"></div></div><span class="ticket-bar-count" style="color:#f85149">181</span></div>
+        <div class="ticket-bar"><span class="ticket-bar-label">Preg. Generales</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:33%; background:#79c0ff;"></div></div><span class="ticket-bar-count" style="color:#79c0ff">137</span></div>
+        <div class="ticket-bar"><span class="ticket-bar-label">Technical Issue</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:13%; background:#e3b341;"></div></div><span class="ticket-bar-count" style="color:#e3b341">54</span></div>
+        <div class="ticket-bar"><span class="ticket-bar-label">Corrections</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:11%; background:#8b949e;"></div></div><span class="ticket-bar-count" style="color:#8b949e">45</span></div>
+      </div>
+      <div style="font-size:11px; color:#8b949e;"><strong style="color:#e3b341;">Top señales:</strong> 42 tickets "link expirado" (fricción post-compra) · 27 tickets confusión gov/privado · Preguntas recurrentes sobre envío postal y tiempos del gobierno.</div>
     </div>
   </div>
-  <div class="quick-prompts">
-    <span class="quick-chip" onclick="sendQuick('¿Cuál es el mayor riesgo del Q3 actual?')">Mayor riesgo Q3</span>
-    <span class="quick-chip" onclick="sendQuick('¿Qué oportunidad tiene más impacto en el NSM?')">Top oportunidad NSM</span>
-    <span class="quick-chip" onclick="sendQuick('Resume el estado del roadmap esta semana')">Estado roadmap</span>
-    <span class="quick-chip" onclick="sendQuick('¿Qué están haciendo los competidores que debería priorizar?')">Competitive insights</span>
-    <span class="quick-chip" onclick="sendQuick('¿Qué dice el feedback reciente de usuarios?')">Feedback usuarios</span>
+</div>
+
+<!-- EASEGOV -->
+<div id="pane-easegov" class="pane">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="product-tag-e">EASEGOV</span> Tickets Mayo 2026 (336 total)</div>
+      <div style="margin-bottom:10px;">
+        <div class="ticket-bar"><span class="ticket-bar-label">Refund</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:55%; background:#f85149;"></div></div><span class="ticket-bar-count" style="color:#f85149">186</span></div>
+        <div class="ticket-bar"><span class="ticket-bar-label">Preg. Generales</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:39%; background:#79c0ff;"></div></div><span class="ticket-bar-count" style="color:#79c0ff">130</span></div>
+        <div class="ticket-bar"><span class="ticket-bar-label">Corrections</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:3%; background:#8b949e;"></div></div><span class="ticket-bar-count" style="color:#8b949e">11</span></div>
+        <div class="ticket-bar"><span class="ticket-bar-label">Technical Issue</span><div class="ticket-bar-track"><div class="ticket-bar-fill" style="width:1.5%; background:#e3b341;"></div></div><span class="ticket-bar-count" style="color:#e3b341">5</span></div>
+      </div>
+      <div style="font-size:11px; color:#f85149;"><strong>⚠️ 55% refunds</strong> — ratio muy alto para MVP en primeros meses.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="product-tag-e">EASEGOV</span> Patrones cualitativos en tickets</div>
+      <table>
+        <thead><tr><th>Patrón</th><th>N</th><th>%</th></tr></thead>
+        <tbody>
+          <tr><td>"Pensaba que era el gobierno"</td><td style="color:#f85149;font-weight:700">141</td><td>42%</td></tr>
+          <tr><td>Preguntas sobre citas TSA</td><td>~15</td><td>~4%</td></tr>
+          <tr><td>Expectativa "TSA = pass inmediato"</td><td>~20</td><td>~6%</td></tr>
+          <tr><td>Cobro duplicado</td><td>~3</td><td>&lt;1%</td></tr>
+          <tr><td>Link / proceso no funciona</td><td>7</td><td>2%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card full-width">
+      <div class="card-title"><span class="product-tag-e">EASEGOV</span> Estado funnel (Amplitude 21–27 May 2026)</div>
+      <div class="gap-warning" style="margin-bottom:10px;"><strong>🔴 Drop crítico en /processing-method (deploy 28 May)</strong>DS-11 Expedited coincide con caída severa en ese paso. Afecta todos los dispositivos. P0.</div>
+      <table>
+        <thead><tr><th>Paso funnel</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody>
+          <tr><td>get_started → registro</td><td><span class="badge badge-green">Estable</span></td><td>Monitor</td></tr>
+          <tr><td>registro → selección servicio</td><td><span class="badge badge-green">Estable</span></td><td>Monitor</td></tr>
+          <tr><td><strong>/processing-method</strong></td><td><span class="badge badge-red">Drop crítico</span></td><td><strong>P0 · Hotfix o rollback parcial</strong></td></tr>
+          <tr><td>processing → checkout</td><td><span class="badge badge-yellow">Afectado</span></td><td>Derivado</td></tr>
+          <tr><td>checkout → pago</td><td><span class="badge badge-yellow">Sin baseline limpio</span></td><td>Pendiente estabilización</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:11px; color:#8b949e; margin-top:8px;">NSM EaseGov sin baseline formal. Pendiente redefinición Q3. Apple Pay (PASGF-740) en tracker.</div>
+    </div>
   </div>
-  <div class="ask-input-area">
-    <textarea id="ask-input" placeholder="Pregunta sobre OKRs, roadmap, competidores, feedback…" rows="1"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
-      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-    <button class="send-btn" id="send-btn" onclick="sendMessage()">↑</button>
+</div>
+
+<!-- INTEL -->
+<div id="pane-intel" class="pane">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔭 Competitive Intel — Passports (May 2026)</div>
+      <div style="font-size:11px; margin-bottom:8px; color:#e3b341;">⚡ 2 motores white-label detectados — 5 sitios distintos son 2 operaciones. 12 competidores monitoreados.</div>
+      <table>
+        <thead><tr><th>Competidor</th><th>Entrada</th><th>Popular</th><th>Ventaja clave</th></tr></thead>
+        <tbody>
+          <tr><td>RushMyPassport</td><td>$119</td><td>$299 (7-9d)⭐</td><td>FedEx badge, 5 tiers</td></tr>
+          <tr><td>Premier / GOV+</td><td>$97</td><td>$297 tachado</td><td>Apple Pay, precios tachados</td></tr>
+          <tr><td>IVS</td><td>$119</td><td>$169 "Best Pop."</td><td>Tier intermedio gap fill</td></tr>
+          <tr><td>HelloGov</td><td>$197 Smart</td><td>$399 (6-10d)</td><td>Add-on "Recommended"</td></tr>
+          <tr><td style="color:#79c0ff;font-weight:700">MPH (nosotros)</td><td>$119</td><td>$299 (4sem)</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:11px; color:#f85149; margin-top:8px;">🔴 HelloGov Smart $197 (2-3sem) vs MPH Smart $299 (4sem). A precio similar, ellos entregan antes. Quick win: precios tachados como Premier.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📡 Radar EaseGov — Semana 4 Jul 2026</div>
+      <div class="intel-item" style="border-color:#79c0ff;">
+        <strong style="color:#79c0ff;">State Dept: "Patriot Passport" (2 Jul 2026)</strong>
+        <div>Edición conmemorativa 250 aniv. Solo presencial D.C. desde 6 Jul. No afecta tiempos estándar. Podría generar búsquedas relacionadas con pasaportes.</div>
+        <div class="intel-source">U.S. Dept. of State</div>
+      </div>
+      <div class="intel-item" style="border-color:#56d364;">
+        <strong style="color:#56d364;">SSA: Tiempos mínimos históricos (29 Jun 2026)</strong>
+        <div>385M transacciones online (+37%). Esperas en oficinas −30%. Podría reducir la percepción de urgencia de usar EaseGov como acelerador del proceso.</div>
+        <div class="intel-source">Social Security Administration</div>
+      </div>
+      <div class="intel-item" style="border-color:#56d364;">
+        <strong style="color:#56d364;">SSA: SS Cards conmemorativas neonatos (1 Jul 2026)</strong>
+        <div>Automático Jul–Dic 2026 a través de hospitales. Sin aplicación adicional. No genera demanda extra pero podría causar confusión.</div>
+        <div class="intel-source">Social Security Administration</div>
+      </div>
+      <div class="intel-item" style="border-color:#e3b341;">
+        <strong style="color:#e3b341;">TSA + Google Wallet: PreCheck Touchless ID (24 Jun 2026)</strong>
+        <div>Verificación biométrica sin ID físico. EaseGov debe monitorear impacto en propuesta de valor del proceso guiado.</div>
+        <div class="intel-source">Transportation Security Administration</div>
+      </div>
+      <div class="intel-item" style="border-color:#f85149;">
+        <strong style="color:#f85149;">FTC: $3.5B imposter scams en 2025 (15 Jun 2026)</strong>
+        <div>Government impersonators = $920M. Contexto: los 141 tickets de confusión gov/privado en EaseGov Mayo coinciden con este patrón. Urgencia de claridad comunicativa.</div>
+        <div class="intel-source">Federal Trade Commission</div>
+      </div>
+    </div>
+    <div class="card full-width">
+      <div class="card-title">📂 Estado sincronización Drive — Carpetas requeridas</div>
+      <table>
+        <thead><tr><th>Carpeta</th><th>Producto</th><th>Estado</th><th>Archivo más reciente</th></tr></thead>
+        <tbody>
+          <tr><td><code>03_metricas_arbol_de_kpis/</code></td><td>Passports</td><td><span class="badge badge-red">⚠️ Vacía</span></td><td>—</td></tr>
+          <tr><td><code>03_metricas_arbol_de_kpis/</code></td><td>EaseGov</td><td><span class="badge badge-red">⚠️ Vacía</span></td><td>—</td></tr>
+          <tr><td><code>03_metricas/roadmap/</code></td><td>Ambos</td><td><span class="badge badge-red">⚠️ Vacía</span></td><td>Solo shortcut a FORECAST 2026</td></tr>
+          <tr><td><code>04_mercado/CI/Passports/</code></td><td>Passports</td><td><span class="badge badge-red">⚠️ Vacía</span></td><td>—</td></tr>
+          <tr><td><code>04_mercado/CI/EaseGov/</code></td><td>EaseGov</td><td><span class="badge badge-red">⚠️ Vacía</span></td><td>—</td></tr>
+          <tr><td><code>07_Feedback/Passports/</code></td><td>Passports</td><td><span class="badge badge-red">⚠️ Vacía</span></td><td>—</td></tr>
+          <tr><td><code>07_Feedback/EaseGov/</code></td><td>EaseGov</td><td><span class="badge badge-red">⚠️ Vacía</span></td><td>—</td></tr>
+          <tr><td><code>EaseGov: Radar News/</code></td><td>EaseGov</td><td><span class="badge badge-green">✓ Activa</span></td><td>easegov-radar-2026-07-04.json</td></tr>
+          <tr><td>Project Knowledge (proxy)</td><td>Ambos</td><td><span class="badge badge-green">✓ Leído</span></td><td>arbol_de_kpis, estado_actual, competidores, tickets</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- OPORTUNIDADES -->
+<div id="pane-opp" class="pane">
+  <div class="card" style="margin-bottom:12px;">
+    <div class="card-title">🎯 TOP 3 OPORTUNIDADES · Priorizadas por impacto en NSM</div>
+    <div class="opp-item">
+      <div class="opp-num" style="color:#f85149;">1</div>
+      <div>
+        <div class="opp-title">🔴 Fix regresión /processing-method (EaseGov) — P0</div>
+        <div class="opp-desc">El deploy del 28 May introdujo una regresión en /processing-method que afecta todos los dispositivos. Cada usuario que abandona ahí nunca llega al pago — impacto directo en NSM. Podría estar relacionado con la complejidad de la nueva pantalla DS-11 Expedited. Requiere Clarity + Amplitude + Desi/Alexander para diagnóstico.</div>
+        <div class="opp-nsm"><span class="badge badge-red">NSM EaseGov: ALTO · Inmediato</span> <span class="badge badge-yellow" style="margin-left:4px;">Esfuerzo: Medio (hotfix / rollback parcial)</span></div>
+      </div>
+    </div>
+    <div class="opp-item">
+      <div class="opp-num" style="color:#e3b341;">2</div>
+      <div>
+        <div class="opp-title">🟡 Claridad propuesta de valor EaseGov (reducir refunds por confusión)</div>
+        <div class="opp-desc">141 tickets (42% total) son usuarios que creían estar en el sitio oficial del gobierno. Esta tasa coincide con el entorno de imposter scams identificado por la FTC ($3.5B en 2025). Reducir la confusión no solo baja la tasa de refund (55% actual) sino que mejora directamente el NSM (usuarios que completan sin refund). Palancas: onboarding más explícito sobre naturaleza privada del servicio + propuesta de valor del "servicio de asistencia" clara antes del pago.</div>
+        <div class="opp-nsm"><span class="badge badge-yellow">NSM EaseGov: ALTO · Retención</span> <span class="badge badge-green" style="margin-left:4px;">Esfuerzo: Bajo-Medio (copy + UX onboarding)</span></div>
+      </div>
+    </div>
+    <div class="opp-item">
+      <div class="opp-num" style="color:#79c0ff;">3</div>
+      <div>
+        <div class="opp-title">🔵 Optimización tier pricing Passports (gap competitivo $119–$299)</div>
+        <div class="opp-desc">IVS tiene tier $169 "Best Popular" que llena el gap entre estándar y expedited. Premier/GOV+ usa precios tachados en todos los tiers (quick win de percepción de valor — ningún esfuerzo técnico). HelloGov ofrece Smart $197 (2-3sem) vs MPH Smart $299 (4sem). Un tier intermedio o precios tachados podría aumentar AOV sin afectar CR, impactando revenue por aplicación y por tanto NSM de Passports.</div>
+        <div class="opp-nsm"><span class="badge badge-blue">NSM Passports: MEDIO-ALTO · Revenue por aplicación</span> <span class="badge badge-green" style="margin-left:4px;">Esfuerzo: Bajo (pricing) / Medio (nuevo tier)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Estado roadmap — inferido desde project knowledge (carpeta roadmap Drive vacía)</div>
+    <div class="roadmap-row">
+      <div class="roadmap-col">
+        <div class="roadmap-col-title live-title">🟢 LIVE</div>
+        <div class="roadmap-item"><div class="ri-label">EaseGov</div>MVP: TSA PreCheck, TSA Renewal, SS Card, Passport (Mar 2026)</div>
+        <div class="roadmap-item"><div class="ri-label">Passports</div>Expedited Service en QA para DS-11</div>
+        <div class="roadmap-item"><div class="ri-label">Infra</div>Amplitude EU · Grafana · QlikSense</div>
+      </div>
+      <div class="roadmap-col">
+        <div class="roadmap-col-title build-title">🟡 IN BUILD</div>
+        <div class="roadmap-item"><div class="ri-label">EaseGov · P0</div>Fix regresión /processing-method</div>
+        <div class="roadmap-item"><div class="ri-label">EaseGov</div>Apple Pay como APM (PASGF-740)</div>
+        <div class="roadmap-item"><div class="ri-label">Passports</div>service_selected en eventos Amplitude (PASGF-1678 / epic 1676)</div>
+        <div class="roadmap-item"><div class="ri-label">Metrics</div>Dashboard salud producto Q3 + baselines KPI</div>
+      </div>
+      <div class="roadmap-col">
+        <div class="roadmap-col-title next-title">🔵 NEXT</div>
+        <div class="roadmap-item"><div class="ri-label">Passports</div>A/B test Step 1 mobile (requiere baseline limpio Google)</div>
+        <div class="roadmap-item"><div class="ri-label">EaseGov</div>Redefinición NSM EaseGov (Patricia — Q3)</div>
+        <div class="roadmap-item"><div class="ri-label">Passports</div>Tier pricing intermedio / precios tachados</div>
+        <div class="roadmap-item"><div class="ri-label">Ambos</div>In-product survey (decidido Dic 2025 · pendiente)</div>
+        <div class="roadmap-item"><div class="ri-label">Passports</div>Dedup eventos: suscription_plan_selected</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────────────────
-let currentProduct = 'passports';
-let chatHistory = [];
-
-const PRODUCT_CONFIG = {
-  passports: {
-    label: 'Passports',
-    badgeClass: 'badge-pass',
-    nsm: 'Aplicaciones completadas con éxito / semana',
-    color: '#4f8ef7',
-    competitors: 'staples.com, uspassportandvisa.org, unitedpassport.com, state.gov, passportvisarush.com, ivs.us, hellogov.com, premier-passport.com, uspassport-online.org, entry.com, clearme.com',
-  },
-  easegov: {
-    label: 'EaseGov',
-    badgeClass: 'badge-ease',
-    nsm: 'Usuarios Premium activos con ≥1 servicio / 30 días',
-    color: '#34d399',
-    competitors: 'govplus.com, rushmypassport.com',
-  },
-  all: {
-    label: 'All Products',
-    badgeClass: 'badge-all',
-    nsm: 'Passports: apps/semana · EaseGov: premium activos/mes',
-    color: '#9999b8',
-    competitors: 'todos los competidores',
-  }
-};
-
-// ─── FOLDER MAP ───────────────────────────────────────────────────────
-// Rutas exactas en Google Drive. Siempre se coge el archivo más reciente.
-const FOLDER_MAP = {
-  competitive: {
-    passports: '04_mercado/competitive Intelligence/Passports',
-    easegov:   '04_mercado/competitive Intelligence/EaseGov',
-    all:       '04_mercado/competitive Intelligence',
-  },
-  feedback: {
-    passports: '07_Feedback/Passports',
-    easegov:   '07_Feedback/EaseGov',
-    all:       '07_Feedback',
-  },
-  roadmap: {
-    passports: '03_metricas/roadmap',
-    easegov:   '03_metricas/roadmap',
-    all:       '03_metricas/roadmap',
-  },
-  kpis: {
-    passports: '03_metricas_arbol_de_kpis',
-    easegov:   '03_metricas_arbol_de_kpis',
-    all:       '03_metricas_arbol_de_kpis',
-  },
-};
-
-function getFolder(section) {
-  const map = FOLDER_MAP[section];
-  if (!map) return null;
-  return map[currentProduct] || map['all'];
+function showTab(tab, el, cls) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active-p','active-e','active-both'); });
+  document.getElementById('pane-' + tab).classList.add('active');
+  el.classList.add(cls);
 }
-
-// ─── SYSTEM PROMPT ────────────────────────────────────────────────────
-const SYSTEM_BASE = `Eres el Product Brain de Leadtech, asistente de inteligencia de producto para Ana (PM).
-Tienes acceso a Google Drive con documentos organizados en carpetas específicas.
-
-REGLAS DE BÚSQUEDA — sigue SIEMPRE este orden exacto:
-1. Usa search_files o list_recent_files con el path de carpeta exacto que se te indica.
-2. De todos los archivos encontrados, selecciona ÚNICAMENTE el más reciente por fecha de modificación.
-3. Lee su contenido completo con read_file_content o download_file_content.
-4. Basa la respuesta EXCLUSIVAMENTE en ese contenido. No inventes ni extrapoles datos.
-5. Si la carpeta no existe o está vacía, indícalo con el path exacto que intentaste.
-
-Contexto de los productos:
-- Passports (mypassporthub.com): performance marketing de pasaportes US. NSM = aplicaciones completadas/semana.
-- EaseGov (easegov.com): plataforma govtech de suscripción, lanzada marzo 2026. NSM = usuarios Premium activos con ≥1 servicio/30 días.
-- Son productos 100% independientes — no hay cross-sell ni funnel compartido.
-
-Responde en español. Sé directo y accionable. Usa HTML simple: <strong>, <ul>, <li>, <br>. Sin markdown.`;
-
-// ─── NAVIGATION ───────────────────────────────────────────────────────
-function showView(view, el) {
-  document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('view-' + view).classList.add('active');
-  if (el) el.classList.add('active');
-  const titles = {overview:'Command Centre',okrs:'Q Objectives',opportunities:'Opportunities & Prioritization',competitive:'Market & Competitive',kpis:'Product KPIs',roadmap:'Roadmap'};
-  document.getElementById('page-title').textContent = titles[view] || view;
-}
-
-function switchProduct(product, btn) {
-  currentProduct = product;
-  document.querySelectorAll('.switcher-btn').forEach(b => b.className = 'switcher-btn');
-  if (product === 'passports') btn.classList.add('active-pass');
-  else if (product === 'easegov') btn.classList.add('active-ease');
-  const cfg = PRODUCT_CONFIG[product];
-  const badge = document.getElementById('product-badge');
-  badge.textContent = cfg.label;
-  badge.className = 'product-badge ' + cfg.badgeClass;
-  document.getElementById('ask-context-chip').textContent = cfg.label;
-  loadOverview();
-}
-
-// ─── API ──────────────────────────────────────────────────────────────
-async function callClaude(userPrompt, system, history) {
-  const messages = history
-    ? [...history, {role:'user', content: userPrompt}]
-    : [{role:'user', content: userPrompt}];
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
-      system: system,
-      messages: messages,
-      mcp_servers: [{type:'url', url:'https://drivemcp.googleapis.com/mcp/v1', name:'google-drive'}]
-    })
-  });
-  if (!res.ok) throw new Error('API ' + res.status);
-  const data = await res.json();
-  return data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-}
-
-// ─── OVERVIEW ─────────────────────────────────────────────────────────
-async function loadOverview() {
-  const cfg = PRODUCT_CONFIG[currentProduct];
-  const fKPI  = getFolder('kpis');
-  const fComp = getFolder('competitive');
-  const fFeed = getFolder('feedback');
-  const fRoad = getFolder('roadmap');
-  document.getElementById('overview-loading').style.display = 'flex';
-  document.getElementById('overview-content').style.display = 'none';
-  try {
-    const result = await callClaude(
-      `Producto activo: ${cfg.label}. NSM: ${cfg.nsm}.
-
-Busca en Google Drive en estas carpetas exactas y toma SIEMPRE el archivo más reciente de cada una:
-- KPIs y métricas:  "${fKPI}"
-- Competitive intel: "${fComp}"
-- Feedback usuarios: "${fFeed}"
-- Roadmap:          "${fRoad}"
-
-Con los datos encontrados, genera SOLO JSON válido (sin texto adicional, sin markdown):
-{
-  "kpis": [
-    {"label":"nombre métrica","value":"valor actual","meta":"fuente del dato","delta":"variación vs semana anterior con signo","deltaType":"up|down|flat"}
-  ],
-  "alerts": [
-    {"title":"título alerta","desc":"descripción concisa","level":"high|med|low","tag":"etiqueta corta"}
-  ],
-  "focus": [
-    {"title":"foco estratégico","desc":"descripción una línea"}
-  ]
-}
-Máximo: 4 KPIs, 3 alertas, 3 focos. Si no hay dato real, pon "—" en el value, no inventes.`,
-      SYSTEM_BASE
-    );
-    let parsed;
-    try { parsed = JSON.parse(result.replace(/```json|```/g,'').trim()); }
-    catch { parsed = fallbackOverview(cfg); }
-    renderOverview(parsed, cfg);
-  } catch(e) {
-    renderOverview(fallbackOverview(cfg), cfg);
-  }
-  document.getElementById('overview-loading').style.display = 'none';
-  document.getElementById('overview-content').style.display = 'block';
-}
-
-function fallbackOverview(cfg) {
-  const isPass = cfg.label === 'Passports';
-  return {
-    kpis: [
-      {label: isPass ? 'NSM · Apps completadas/sem' : 'NSM · Premium activos', value:'—', meta: isPass ? 'Fuente: Grafana PASS' : 'Fuente: Amplitude', delta:'Conecta Drive para ver datos', deltaType:'flat'},
-      {label: isPass ? 'CR Pagados/Iniciados' : 'CR Payment', value:'—', meta:'Fuente: BD / Amplitude', delta:'—', deltaType:'flat'},
-      {label:'Refund Rate', value:'—', meta:'Fuente: Qlik', delta:'—', deltaType:'flat'},
-    ],
-    alerts:[{title:'Conecta Google Drive',desc:'Autoriza Drive MCP para cargar datos reales del Product Brain.',level:'med',tag:'Setup'}],
-    focus:[{title:'Cargar datos desde Drive',desc:'Pulsa "Refresh" para sincronizar con los documentos más recientes.'}]
-  };
-}
-
-function renderOverview(data, cfg) {
-  document.getElementById('kpi-cards').innerHTML = (data.kpis||[]).map(k =>`
-    <div class="card">
-      <div class="card-label">${k.label}</div>
-      <div class="card-value" style="color:${cfg.color}">${k.value}</div>
-      <div class="card-meta">${k.meta||''}</div>
-      ${k.delta && k.delta !== '—' ? `<div class="card-delta delta-${k.deltaType||'flat'}">${k.delta}</div>` : ''}
-    </div>`).join('');
-
-  document.getElementById('alerts-body').innerHTML = (data.alerts||[]).map(a =>`
-    <div class="alert-item">
-      <div class="alert-dot alert-${a.level}"></div>
-      <div class="alert-body">
-        <div class="alert-title">${a.title}</div>
-        <div class="alert-desc">${a.desc}</div>
-      </div>
-      <div class="alert-tag">${a.tag||''}</div>
-    </div>`).join('') || '<div class="empty-state">Sin alertas esta semana ✓</div>';
-
-  document.getElementById('focus-body').innerHTML = (data.focus||[]).map(f =>`
-    <div class="opp-item">
-      <div class="opp-content">
-        <div class="opp-title">${f.title}</div>
-        <div class="opp-desc">${f.desc}</div>
-      </div>
-    </div>`).join('');
-}
-
-// ─── GENERIC SECTION LOADER ───────────────────────────────────────────
-async function loadSection(bodyId, btnId, prompt) {
-  const btn = document.getElementById(btnId);
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinning">↻</span> Cargando…'; }
-  document.getElementById(bodyId).innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:var(--text3);padding:8px 0"><span>Leyendo Google Drive…</span><div class="loading-bar"></div></div>';
-  const cfg = PRODUCT_CONFIG[currentProduct];
-  const filled = prompt
-    .replace(/\{\{PRODUCT\}\}/g, cfg.label)
-    .replace(/\{\{NSM\}\}/g, cfg.nsm)
-    .replace(/\{\{COMPETITORS\}\}/g, cfg.competitors);
-  try {
-    const result = await callClaude(filled, SYSTEM_BASE);
-    document.getElementById(bodyId).innerHTML = result;
-  } catch(e) {
-    document.getElementById(bodyId).innerHTML = `<div class="empty-state"><div class="empty-icon">⚠</div>Error al conectar con Drive.<br><small style="color:var(--text3)">${e.message}</small></div>`;
-  }
-  if (btn) { btn.disabled = false; btn.innerHTML = '↻ Sync from Drive'; }
-}
-
-// ─── SECTION LOADERS ──────────────────────────────────────────────────
-function loadOKRs() {
-  loadSection('okrs-body', 'okr-refresh-btn',
-    `Producto: {{PRODUCT}}. NSM: {{NSM}}.
-Busca en Google Drive los OKRs del Q actual. Carpeta principal: "03_metricas_arbol_de_kpis". Si no hay OKRs ahí, busca en "03_metricas/roadmap".
-Toma el archivo más reciente.
-Muestra los objetivos y sus Key Results con progreso estimado (%).
-Usa este HTML exactamente — un bloque por objetivo:
-<div class="okr-objective">
-  <div class="okr-obj-title">◎ Objetivo N: [título]</div>
-  <div class="okr-kr"><span style="flex:1;color:var(--text)">KR: descripción</span><div class="kr-progress"><div class="kr-bar" style="width:X%"></div></div><span class="kr-pct">X%</span></div>
-</div>
-Si el progreso no está en el doc, indícalo con "estimado" junto al porcentaje.`);
-}
-
-function loadOpportunities() {
-  loadSection('opp-body', 'opp-refresh-btn',
-    `Producto: {{PRODUCT}}. NSM: {{NSM}}.
-Busca en Google Drive documentos de oportunidades, backlog o discovery.
-Carpeta feedback: "${getFolder('feedback')}". Carpeta roadmap: "${getFolder('roadmap')}".
-Toma el archivo más reciente de cada carpeta.
-Lista las 5-8 oportunidades más relevantes priorizadas por impacto en NSM.
-Usa este HTML por oportunidad:
-<div class="opp-item"><div class="opp-rank">#N</div><div class="opp-content"><div class="opp-title">Título</div><div class="opp-desc">Descripción e impacto esperado</div><div class="opp-tags"><span class="tag tag-impact">Impact: Alto/Medio/Bajo</span><span class="tag tag-effort">Effort: S/M/L</span><span class="tag tag-nsm">NSM</span></div></div></div>`);
-}
-
-function loadCompetitive() {
-  loadSection('comp-body', 'comp-refresh-btn',
-    `Producto: {{PRODUCT}}. Competidores: {{COMPETITORS}}.
-Busca en Google Drive la carpeta exacta: "${getFolder('competitive')}".
-Toma el archivo más reciente (mayor fecha de modificación).
-Extrae y muestra:
-<strong>Resumen ejecutivo</strong><br>[3-4 bullets con los movimientos más relevantes]<br><br>
-<strong>Movimientos detectados por competidor</strong><br><ul>[li por competidor con cambios]</ul>
-<strong>Hipótesis de producto derivadas</strong><br><ul>[li: Si [observación] → entonces [hipótesis para {{PRODUCT}}] → KR impactado]</ul>
-<strong>Alertas prioritarias</strong><br>[Solo si hay algo urgente, si no: "Sin alertas esta semana."]`);
-}
-
-function loadKPIs() {
-  loadSection('kpis-body', 'kpi-refresh-btn',
-    `Producto: {{PRODUCT}}. NSM: {{NSM}}.
-Busca en Google Drive la carpeta exacta: "${getFolder('kpis')}".
-Toma el archivo más reciente.
-Muestra KPIs clave con valor actual y comparativa semana anterior.
-Usa cards HTML:
-<div class="cards-grid">
-  <div class="card"><div class="card-label">NSM</div><div class="card-value" style="color:var(--pass)">VALOR</div><div class="card-meta">Fuente</div><div class="card-delta delta-up/down/flat">delta</div></div>
-</div>
-Incluye: NSM, CR global, CR por device si disponible, ARPU (EaseGov), Refund Rate, Chargeback Rate.
-Si algún dato no está en el doc, pon "—" y señala la fuente esperada.`);
-}
-
-function loadRoadmap() {
-  loadSection('roadmap-body', 'road-refresh-btn',
-    `Producto: {{PRODUCT}}.
-Busca en Google Drive la carpeta exacta: "${getFolder('roadmap')}".
-Toma el archivo más reciente.
-Agrupa los ítems del roadmap por estado: Live, In Build, Next.
-Usa este HTML por ítem:
-<div class="roadmap-item"><div class="roadmap-status status-live|build|next">LIVE|BUILD|NEXT</div><div class="roadmap-content"><div class="roadmap-title">Nombre feature</div><div class="roadmap-desc">Descripción breve + ETA si disponible</div></div></div>
-Si no hay datos en el doc, indícalo claramente.`);
-}
-
-// ─── ASK PANEL ────────────────────────────────────────────────────────
-function openAsk()  { document.getElementById('ask-panel').classList.add('open'); }
-function closeAsk() { document.getElementById('ask-panel').classList.remove('open'); }
-function sendQuick(text) { document.getElementById('ask-input').value = text; sendMessage(); }
-
-async function sendMessage() {
-  const input = document.getElementById('ask-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.style.height = 'auto';
-  const cfg = PRODUCT_CONFIG[currentProduct];
-  appendMsg('user', text);
-  chatHistory.push({role:'user', content: text});
-  const sendBtn = document.getElementById('send-btn');
-  sendBtn.disabled = true;
-  const thinkId = appendThinking();
-  const systemChat = SYSTEM_BASE + `
-Producto activo: ${cfg.label}. NSM: ${cfg.nsm}.
-Carpetas de Drive para este producto:
-- Competitive intel: "${getFolder('competitive')}"
-- Feedback: "${getFolder('feedback')}"
-- Roadmap: "${getFolder('roadmap')}"
-- KPIs: "${getFolder('kpis')}"
-En cada búsqueda, toma SIEMPRE el archivo más reciente de la carpeta correspondiente.`;
-  try {
-    const reply = await callClaude(text, systemChat, chatHistory.slice(0,-1));
-    removeThinking(thinkId);
-    chatHistory.push({role:'assistant', content: reply});
-    appendMsg('ai', reply);
-  } catch(e) {
-    removeThinking(thinkId);
-    appendMsg('ai', `<span style="color:var(--red)">Error al conectar con Drive: ${e.message}</span>`);
-  }
-  sendBtn.disabled = false;
-}
-
-function appendMsg(role, html) {
-  const container = document.getElementById('chat-messages');
-  const div = document.createElement('div');
-  div.className = 'msg';
-  div.innerHTML = `<div class="msg-avatar avatar-${role}">${role==='user'?'A':'✦'}</div><div class="msg-body ${role==='user'?'user-msg':''}">${html}</div>`;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-}
-function appendThinking() {
-  const container = document.getElementById('chat-messages');
-  const id = 'think-' + Date.now();
-  const div = document.createElement('div');
-  div.className = 'msg'; div.id = id;
-  div.innerHTML = `<div class="msg-avatar avatar-ai">✦</div><div class="msg-body"><div class="thinking"><span></span><span></span><span></span></div></div>`;
-  container.appendChild(div);
-  container.scrollTop = container.scrollHeight;
-  return id;
-}
-function removeThinking(id) { const el=document.getElementById(id); if(el) el.remove(); }
-
-// ─── INIT ─────────────────────────────────────────────────────────────
-window.addEventListener('load', loadOverview);
 </script>
 </body>
 </html>
