@@ -798,96 +798,435 @@ code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 10px; backgrou
 <div id="pane-intel" class="pane">
 
   <div class="stat-strip" style="grid-template-columns:repeat(4,1fr)">
-    <div class="stat-strip-item"><div class="stat-strip-label">Alertas activas</div><div class="stat-strip-value" style="color:var(--red)">4</div></div>
-    <div class="stat-strip-item"><div class="stat-strip-label">Alto impacto</div><div class="stat-strip-value">2</div></div>
-    <div class="stat-strip-item"><div class="stat-strip-label">Vigilar</div><div class="stat-strip-value">2</div></div>
-    <div class="stat-strip-item"><div class="stat-strip-label">Competidores tracked</div><div class="stat-strip-value">12</div></div>
-  </div>
-
-  <div class="section-title">📡 Radar de mercado — Semana 4 Jul 2026</div>
-  <div class="card">
-    <div style="display:flex;flex-direction:column;gap:0">
-
-      <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start">
-        <span class="badge badge-red" style="flex-shrink:0;margin-top:2px">Alto impacto</span>
-        <div>
-          <div style="font-weight:600;font-size:13px;margin-bottom:3px">FTC: $3.5B perdidos por imposter scams en 2025 — $920M de government impersonators</div>
-          <div style="font-size:13px;color:#374151;line-height:1.5">Los refunds de EaseGov en Mayo (28.1%) podrían estar relacionados con este contexto de mercado. Los usuarios que buscan el sitio oficial del gobierno son capturados por EaseGov pero no entienden que es un servicio privado de asistencia antes de pagar.</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">FTC · 15 Jun 2026 · Fuente: easegov-radar-2026-06-23.json</div>
-        </div>
-      </div>
-
-      <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start">
-        <span class="badge badge-red" style="flex-shrink:0;margin-top:2px">Alto impacto</span>
-        <div>
-          <div style="font-weight:600;font-size:13px;margin-bottom:3px">State Dept lanza "Patriot Passport" conmemorativo desde 6 Jul</div>
-          <div style="font-size:13px;color:#374151;line-height:1.5">Solo presencial en Washington D.C. No afecta tiempos estándar. Podría generar un pico informativo de búsquedas sobre pasaportes esta semana que beneficie el tráfico de Passports.</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">U.S. Dept. of State · 2 Jul 2026 · Fuente: easegov-radar-2026-07-04.json</div>
-        </div>
-      </div>
-
-      <div style="padding:14px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start">
-        <span class="badge badge-yellow" style="flex-shrink:0;margin-top:2px">Vigilar</span>
-        <div>
-          <div style="font-weight:600;font-size:13px;margin-bottom:3px">SSA anuncia tiempos mínimos históricos — esperas en oficinas −30%</div>
-          <div style="font-size:13px;color:#374151;line-height:1.5">385M transacciones online (+37% vs 2024). Si el proceso de Social Security se percibe como más fácil directamente en SSA, podría reducir la propuesta de valor del servicio guiado de EaseGov para ese producto.</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">SSA · 29 Jun 2026 · Fuente: radar Drive</div>
-        </div>
-      </div>
-
-      <div style="padding:14px 0;display:flex;gap:12px;align-items:flex-start">
-        <span class="badge badge-yellow" style="flex-shrink:0;margin-top:2px">Vigilar</span>
-        <div>
-          <div style="font-weight:600;font-size:13px;margin-bottom:3px">TSA + Google Wallet: PreCheck Touchless ID sin presentar ID físico</div>
-          <div style="font-size:13px;color:#374151;line-height:1.5">TSA simplifica su UX directamente. Si el proceso de PreCheck se percibe como más accesible sin intermediarios, EaseGov debe revisar el mensaje de "asistencia y guía" vs "hacerlo solo".</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:4px">TSA · 24 Jun 2026 · Fuente: easegov-radar-2026-07-01.json</div>
-        </div>
-      </div>
-
+    <div class="stat-strip-item">
+      <div class="stat-strip-label">Alertas activas</div>
+      <div class="stat-strip-value" style="color:var(--red)">5</div>
+      <div class="stat-strip-sub">Semana 28 Jun – 4 Jul</div>
+    </div>
+    <div class="stat-strip-item">
+      <div class="stat-strip-label">Alto impacto</div>
+      <div class="stat-strip-value">3</div>
+      <div class="stat-strip-sub">Acción inmediata</div>
+    </div>
+    <div class="stat-strip-item">
+      <div class="stat-strip-label">Vigilar</div>
+      <div class="stat-strip-value">2</div>
+      <div class="stat-strip-sub">Monitorizar</div>
+    </div>
+    <div class="stat-strip-item">
+      <div class="stat-strip-label">Competidores tracked</div>
+      <div class="stat-strip-value">12</div>
+      <div class="stat-strip-sub">PP + EaseGov</div>
     </div>
   </div>
 
-  <div class="section-title">⚔️ Competitive Intel — Passports (12 competidores monitoreados)</div>
-  <div class="card">
-    <div class="alert-item" style="background:#fafafa;border-left:3px solid #d1d5db;padding:10px 12px;margin-bottom:14px">
-      <span>⚡</span>
-      <div><strong>2 motores white-label detectados</strong> — 5 sitios distintos son 2 operaciones. No aparece en ninguna herramienta de mercado estándar.</div>
+  <!-- TABS INTEL -->
+  <div style="display:flex;gap:8px;margin-bottom:16px;margin-top:20px">
+    <button onclick="showIntel('alerts')" id="itab-alerts"
+      style="padding:7px 16px;border-radius:6px;border:1px solid var(--border);background:#1a1a1a;color:#fff;font-size:12px;font-weight:600;cursor:pointer">
+      🚨 Alertas prioritarias
+    </button>
+    <button onclick="showIntel('easegov')" id="itab-easegov"
+      style="padding:7px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;cursor:pointer">
+      🏛 EaseGov vs Competidores
+    </button>
+    <button onclick="showIntel('passports')" id="itab-passports"
+      style="padding:7px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;cursor:pointer">
+      🛂 Passports vs Competidores
+    </button>
+    <button onclick="showIntel('sector')" id="itab-sector"
+      style="padding:7px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;cursor:pointer">
+      📰 Noticias del sector
+    </button>
+    <button onclick="showIntel('hipotesis')" id="itab-hipotesis"
+      style="padding:7px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:600;cursor:pointer">
+      💡 Hipótesis de producto
+    </button>
+  </div>
+
+  <!-- ALERTAS -->
+  <div id="intel-alerts" class="intel-pane">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Alertas prioritarias — semana 28 Jun – 4 Jul 2026</div>
+        <div class="card-sub">Fuente: CI_EaseGov.md · CI_Passports.md</div>
+      </div>
+
+      <div class="alert-item alert-high">
+        <span class="alert-icon">🔴</span>
+        <div class="alert-content">
+          <div class="alert-title"><span class="pill pill-e">EaseGov</span> &nbsp;GovPlus expansión agresiva — 7 nuevas verticales + 5 features en simultáneo</div>
+          <div class="alert-body">GovPlus ha lanzado Expert Services (veteranos, SSDI, tax relief, workers' comp, desempleo, FEMA, expungement), Online Notary, Benefits Finder (1.200+ programas), Unclaimed Money Finder y Renewal Watch. Esta expansión simultánea sugiere una ronda de financiación reciente o un esfuerzo deliberado de consolidar market share antes de que EaseGov (lanzado Mar 2026) gane tracción. GovPlus cobra $159/año vs EaseGov $89.99/año — brecha del 77% a favor de EaseGov en precio, pero creciente brecha de features.</div>
+          <div class="alert-meta">Acción: Auditar brecha de features vs GovPlus. Priorizar Renewal Watch y Benefits Finder en backlog. Comunicar activamente la ventaja de precio en landing y checkout.</div>
+        </div>
+      </div>
+
+      <div class="alert-item alert-high">
+        <span class="alert-icon">🔴</span>
+        <div class="alert-content">
+          <div class="alert-title"><span class="pill pill-p">Passports</span> &nbsp;HelloGov integra APVI (nuestro courier partner) en su marketplace + partnership con CLEAR+</div>
+          <div class="alert-body">APVI, courier partner de mypassporthub, aparece listado dentro de la plataforma HelloGov. HelloGov tiene además un acuerdo de distribución con CLEAR+ (10% descuento para sus millones de miembros de alto valor — viajeros frecuentes). Esto significa que APVI está operando en múltiples canales sin exclusividad aparente con mypassporthub, potencialmente canibalizando demanda.</div>
+          <div class="alert-meta">Acción urgente: Validar términos de acuerdo con APVI. ¿Hay cláusula de exclusividad o diferenciación de producto? Elevar a Patricia / Alexander.</div>
+        </div>
+      </div>
+
+      <div class="alert-item alert-high">
+        <span class="alert-icon">🔴</span>
+        <div class="alert-content">
+          <div class="alert-title"><span class="pill pill-p">Passports</span> &nbsp;Entry.com ejecuta marketing de contenido de alta sofisticación — pasaporte America250 con $100 reserva</div>
+          <div class="alert-body">Entry.com lanzó una landing de reserva del pasaporte conmemorativo America250 (Trump portrait) cobrando $100 de señal (descontable del servicio a $499, con garantía de devolución total). Capturan leads de alta intención alrededor del pico de búsquedas de July 4th. Además, entry.com podría compartir infraestructura con ivs.us — en ese caso sería un competidor más amplio de lo estimado. Nivel de sofisticación de marketing superior al promedio del sector.</div>
+          <div class="alert-meta">Acción: Publicar contenido informativo sobre el pasaporte America250 esta semana para capturar tráfico. Investigar si entry.com e ivs.us comparten backend/dueños.</div>
+        </div>
+      </div>
+
+      <div class="alert-item alert-med">
+        <span class="alert-icon">🟡</span>
+        <div class="alert-content">
+          <div class="alert-title"><span class="pill pill-e">EaseGov</span> &nbsp;GovPlus sube precio one-time a $67 (antes $57) — diferencial de precio con EaseGov mejora</div>
+          <div class="alert-body">Los meta-tags del sitio de GovPlus indicaban $57; el precio visible ahora es $67. Si el aumento se confirma, la brecha de precio con EaseGov se amplía. La suscripción anual de GovPlus ($159/año) ya era un 77% más cara que EaseGov ($89.99/año). Requiere validación en la próxima semana.</div>
+          <div class="alert-meta">Acción: Validar el precio actual de GovPlus one-time la próxima semana. Si se confirma, usar como argumento de precio en landing EaseGov.</div>
+        </div>
+      </div>
+
+      <div class="alert-item alert-med">
+        <span class="alert-icon">🟡</span>
+        <div class="alert-content">
+          <div class="alert-title"><span class="pill pill-both">Ambos</span> &nbsp;State Dept evalúa ampliar renovación online a primeras solicitudes — riesgo estructural</div>
+          <div class="alert-body">Tras emitir 7.3 millones de renovaciones online con 94% de satisfacción, el State Dept pilota ahora primeras solicitudes digitales. Si se implementa plenamente, reduce la fricción que actualmente beneficia a servicios de asistencia como Passports y EaseGov. Plazo estimado: 12–18 meses para impacto relevante.</div>
+          <div class="alert-meta">Acción: Monitorizar la expansión del portal online. Ajustar propuesta de valor hacia velocidad y soporte experto, no solo formularios.</div>
+        </div>
+      </div>
     </div>
-    <table class="data-table">
-      <thead>
-        <tr><th>Competidor</th><th>Precio entrada</th><th>Tier popular</th><th>Ventaja clave vs MPH</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>RushMyPassport</td><td class="num">$119</td><td class="num">$299 (7–9d) ⭐</td>
-          <td>FedEx badge · 5 tiers · mismo precio, menor tiempo de entrega</td>
-        </tr>
-        <tr>
-          <td>Premier / GOV+</td><td class="num">$97</td><td class="num">$297 tachado</td>
-          <td>Apple Pay · precios tachados en todos los tiers · entrada más barata</td>
-        </tr>
-        <tr>
-          <td>IVS</td><td class="num">$119</td><td class="num">$169 "Best Pop."</td>
-          <td>Tier intermedio entre $119 y $299 — llena el gap que MPH no tiene</td>
-        </tr>
-        <tr>
-          <td>HelloGov</td><td class="num">$197 Smart</td><td class="num">$399 (6–10d)</td>
-          <td>Smart a $197 (2–3 sem) vs MPH $299 (4 sem) · add-on "Recommended"</td>
-        </tr>
-        <tr style="background:#eff6ff;font-weight:600">
-          <td style="color:var(--blue)">MPH (nosotros)</td><td class="num">$119</td><td class="num">$299 (4 sem)</td>
-          <td style="color:var(--muted)">Sin precios tachados · sin tier intermedio · menor urgencia percibida</td>
-        </tr>
-      </tbody>
-    </table>
-    <div style="font-size:11px;color:var(--muted);margin-top:10px">📂 Fuente: competidores.docx · análisis Abr–May 2026 · carpetas CI en Drive aún vacías</div>
+  </div>
+
+  <!-- EASEGOV CI -->
+  <div id="intel-easegov" class="intel-pane" style="display:none">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">GovPlus (govplus.com)</div><div class="card-sub">Competidor principal EaseGov</div></div>
+          <span class="badge badge-red">🔴 Alerta alta</span>
+        </div>
+        <table class="data-table">
+          <tbody>
+            <tr><td>Precio suscripción</td><td class="num"><strong>$159/año</strong></td><td style="color:var(--green);font-size:12px">EaseGov: $89.99 (-77%)</td></tr>
+            <tr><td>Add-on Family</td><td class="num">+$59/año</td><td class="muted">5 miembros, vault compartido</td></tr>
+            <tr><td>Add-on Unlimited</td><td class="num">+$99/año</td><td class="muted">Docs ilimitados</td></tr>
+            <tr><td>One-time form</td><td class="num">$67 ⬆</td><td style="color:var(--red);font-size:12px">Era $57 — posible subida</td></tr>
+            <tr><td>Social proof</td><td class="num">1.5M usuarios</td><td class="muted">Trustpilot 4.8 · 3.041 reseñas</td></tr>
+          </tbody>
+        </table>
+        <hr class="divider">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px">Nuevas features detectadas</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="badge badge-red">Expert Services (7 verticales)</span>
+          <span class="badge badge-yellow">Online Notary</span>
+          <span class="badge badge-yellow">Benefits Finder 1.200+</span>
+          <span class="badge badge-yellow">Unclaimed Money</span>
+          <span class="badge badge-yellow">Renewal Watch</span>
+          <span class="badge badge-gray">Timeline</span>
+          <span class="badge badge-gray">Family Dashboard</span>
+        </div>
+        <div class="source">📂 govplus.com/pricing · 4 Jul 2026 · CI_EaseGov.md</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">RushMyPassport (rushmypassport.com)</div><div class="card-sub">Referencia de modelo transaccional</div></div>
+          <span class="badge badge-yellow">🟡 Vigilar</span>
+        </div>
+        <table class="data-table">
+          <tbody>
+            <tr><td>Modelo</td><td class="num">Transaccional</td><td class="muted">Sin suscripción</td></tr>
+            <tr><td>Precio entrada</td><td class="num">$119</td><td class="muted">+ government fees</td></tr>
+            <tr><td>Tier urgente</td><td class="num">1 día hábil</td><td class="muted">Same Day Service</td></tr>
+            <tr><td>Mensajería velocidad</td><td class="num" style="color:var(--yellow)">Moderada ⬇</td><td class="muted">Era "24h", ahora "3 business days"</td></tr>
+            <tr><td>Nuevas secciones</td><td>Travel Essentials</td><td class="muted">Fotos, IDPs, seguros, visas</td></tr>
+          </tbody>
+        </table>
+        <hr class="divider">
+        <div style="font-size:12px;color:#374151;line-height:1.5">
+          <strong>Movimiento clave:</strong> RushMyPassport se está diversificando hacia adyacentes de viaje (Travel Essentials: seguros médicos, permisos de conducir internacionales). Si EaseGov tiene en roadmap servicios relacionados con viaje, conviene acelerar antes de que consoliden esa posición.
+        </div>
+        <div class="source">📂 rushmypassport.com · 4 Jul 2026 · CI_EaseGov.md</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:0">
+      <div class="card-head">
+        <div class="card-title">Comparativa de precios — EaseGov vs GovPlus</div>
+        <div class="card-sub">Ventaja de precio de EaseGov</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Suscripción anual</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;min-width:80px">EaseGov</span>
+            <div style="flex:1;background:#f1f5f9;border-radius:4px;height:20px;overflow:hidden">
+              <div style="height:100%;background:var(--purple);border-radius:4px;width:56.7%;display:flex;align-items:center;padding-left:8px;font-size:11px;color:#fff;font-weight:700">$89.99</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+            <span style="font-size:13px;min-width:80px">GovPlus</span>
+            <div style="flex:1;background:#f1f5f9;border-radius:4px;height:20px;overflow:hidden">
+              <div style="height:100%;background:var(--red);border-radius:4px;width:100%;display:flex;align-items:center;padding-left:8px;font-size:11px;color:#fff;font-weight:700">$159.00 (+77%)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="alert-item alert-low" style="margin-top:14px;margin-bottom:0">
+        <span>💡</span>
+        <div class="alert-content">
+          <div class="alert-title">Oportunidad de posicionamiento por precio</div>
+          <div class="alert-body">EaseGov es un 77% más barato que GovPlus en suscripción anual. Esta ventaja no está siendo comunicada activamente en la landing page ni en el checkout. Es un argumento de conversión de bajo esfuerzo y alto impacto.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSPORTS CI -->
+  <div id="intel-passports" class="intel-pane" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-head">
+        <div class="card-title">Ranking de alertas — Passports</div>
+        <div class="card-sub">Semana 28 Jun – 4 Jul 2026 · CI_Passports.md</div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Competidor</th><th>Señal</th><th>Impacto</th><th>Acción</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>hellogov.com</strong></td>
+            <td>Integra APVI en marketplace + CLEAR+ partnership</td>
+            <td><span class="badge badge-red">🔴 Alto</span></td>
+            <td style="font-size:12px">Validar exclusividad con APVI urgente</td>
+          </tr>
+          <tr>
+            <td><strong>entry.com</strong></td>
+            <td>Landing reserva pasaporte America250 ($100 señal)</td>
+            <td><span class="badge badge-red">🔴 Alto</span></td>
+            <td style="font-size:12px">Publicar contenido informativo esta semana</td>
+          </tr>
+          <tr>
+            <td><strong>state.gov</strong></td>
+            <td>Piloto online para primeras solicitudes + nuevas tarifas</td>
+            <td><span class="badge badge-yellow">🟡 Medio</span></td>
+            <td style="font-size:12px">Actualizar calculadoras de costos</td>
+          </tr>
+          <tr>
+            <td><strong>uspassportandvisa.org</strong></td>
+            <td>Captura tráfico orgánico, flagged como scam</td>
+            <td><span class="badge badge-yellow">🟡 Medio</span></td>
+            <td style="font-size:12px">SEO defensivo: "legitimate courier"</td>
+          </tr>
+          <tr>
+            <td><strong>ivs.us</strong></td>
+            <td>Posible integración con entry.com (mismo backend)</td>
+            <td><span class="badge badge-yellow">🟡 Medio</span></td>
+            <td style="font-size:12px">Investigar si comparten dueños</td>
+          </tr>
+          <tr>
+            <td><strong>clearme.com</strong></td>
+            <td>Canal B2B2C para HelloGov — perfil ideal para expedited</td>
+            <td><span class="badge badge-yellow">🟡 Medio</span></td>
+            <td style="font-size:12px">Explorar partnership similar</td>
+          </tr>
+          <tr>
+            <td>staples.com</td><td>Sin cambios</td><td><span class="badge badge-gray">⚪ Ninguna</span></td><td class="muted">Complementario</td>
+          </tr>
+          <tr>
+            <td>premier-passport.com</td><td>Sin cambios</td><td><span class="badge badge-gray">⚪ Ninguna</span></td><td class="muted">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">HelloGov — Movimiento más relevante del trimestre</div></div>
+          <span class="badge badge-red">🔴 Alto</span>
+        </div>
+        <div style="font-size:13px;color:#374151;line-height:1.6;margin-bottom:12px">
+          HelloGov ha construido un <strong>marketplace de couriers certificados</strong> que incluye a <strong>APVI</strong> (nuestro partner) y ha firmado un acuerdo de distribución con <strong>CLEAR+</strong> (10% descuento para miembros). CLEAR tiene millones de usuarios de alto valor — el perfil exacto de cliente de expedited passport.
+        </div>
+        <div class="alert-item alert-high" style="margin-bottom:0">
+          <span>⚠️</span>
+          <div class="alert-content">
+            <div class="alert-title">APVI opera en HelloGov sin exclusividad aparente con MPH</div>
+            <div class="alert-body">Si APVI está generando volumen desde HelloGov, estamos compitiendo contra nuestro propio courier partner. Requiere validación inmediata del contrato con APVI.</div>
+          </div>
+        </div>
+        <div class="source">📂 hellogov.com · clearme.com/partner-detail-pages/hellogov · CI_Passports.md</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">Entry.com — Competidor de mayor sofisticación estimada</div></div>
+          <span class="badge badge-red">🔴 Alto</span>
+        </div>
+        <div style="font-size:13px;color:#374151;line-height:1.6;margin-bottom:12px">
+          Entry.com lanzó una <strong>landing de reserva para el pasaporte conmemorativo America250</strong> cobrando $100 de señal (descontable del servicio total de $499, con devolución garantizada si no consiguen el documento). Captura leads de alta intención en el pico de búsquedas de July 4th. Además, su integración con ivs.us podría indicar que entry.com es un competidor más amplio de lo estimado.
+        </div>
+        <table class="data-table">
+          <tbody>
+            <tr><td>Precio total servicio</td><td class="num">$499</td></tr>
+            <tr><td>Señal de reserva</td><td class="num">$100</td><td class="muted">Descontable, garantía devolución</td></tr>
+            <tr><td>Estrategia</td><td colspan="2" style="font-size:12px">Contenido editorial + producto en momentos de alta demanda</td></tr>
+          </tbody>
+        </table>
+        <div class="source">📂 entry.com/trump-passport · CI_Passports.md</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTOR NEWS -->
+  <div id="intel-sector" class="intel-pane" style="display:none">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Noticias del sector — Semana 28 Jun – 4 Jul 2026</div>
+      </div>
+
+      <div style="padding:14px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="pill pill-p">Passports</span>
+          <span class="badge badge-red">Alto impacto</span>
+        </div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">Pasaporte conmemorativo America250 — disponible desde 6 Jul solo en DC</div>
+        <div style="font-size:13px;color:#374151;line-height:1.5">El State Department emite entre 25.000 y 30.000 pasaportes edición limitada con foto de Trump. Solo presencial en la agencia de Washington D.C., mientras haya existencias. Genera pico de búsquedas sobre pasaportes alrededor de July 4th que mypassporthub podría aprovechar con contenido informativo.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">CNN · Washington Post · NPR — 26-29 Jun 2026 · Fuente: CI_Passports.md</div>
+      </div>
+
+      <div style="padding:14px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="pill pill-p">Passports</span>
+          <span class="badge badge-yellow">Vigilar</span>
+        </div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">ETIAS (UE) confirmado para Q4 2026 — ola de renovaciones anticipada</div>
+        <div style="font-size:13px;color:#374151;line-height:1.5">Todos los ciudadanos estadounidenses necesitarán ETIAS (€20) para entrar al espacio Schengen. El plazo se acerca y podría generar un aumento de renovaciones de pasaporte en septiembre-octubre. Oportunidad para campañas "ETIAS-ready passport" de mypassporthub.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">AFAR · Schengen Traveler · Fuente: CI_Passports.md</div>
+      </div>
+
+      <div style="padding:14px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="pill pill-both">Ambos</span>
+          <span class="badge badge-yellow">Vigilar</span>
+        </div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">Récord de demanda de pasaportes: 27.3 millones en FY2025</div>
+        <div style="font-size:13px;color:#374151;line-height:1.5">La demanda sigue alta en 2026 con tiempos de espera de 4–6 semanas en rutinario y hasta 10–12 semanas puerta-a-puerta en pico. El State Dept amplía personal y herramientas digitales. Entorno favorable para servicios de expediting.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">US Passport Service Guide · CBS News · Fuente: CI_Passports.md</div>
+      </div>
+
+      <div style="padding:14px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="pill pill-e">EaseGov</span>
+          <span class="badge badge-blue">Informativo</span>
+        </div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">State Dept amplía elegibilidad de renovación online — 7.3M renovaciones con 94% satisfacción</div>
+        <div style="font-size:13px;color:#374151;line-height:1.5">El portal opr.travel.state.gov continúa ampliando elegibilidad, ahora evaluando piloto de primeras solicitudes. EaseGov tiene una ventana para posicionarse como "el guía" del proceso oficial antes de que la experiencia directa mejore.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Nextgov/FCW — Mayo 2026 · Fuente: CI_EaseGov.md + CI_Passports.md</div>
+      </div>
+
+      <div style="padding:14px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="pill pill-e">EaseGov</span>
+          <span class="badge badge-blue">Informativo</span>
+        </div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">Code for America + Anthropic: IA para administración de beneficios públicos</div>
+        <div style="font-size:13px;color:#374151;line-height:1.5">Piloto conjunto para que funcionarios accedan a información de política pública vía IA, agilizando la entrega de beneficios. Señal de que la IA en gobierno entra por el back-office. Podría cambiar la velocidad de procesamiento de trámites en 12–18 meses.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">GovTech.com · Fuente: CI_EaseGov.md</div>
+      </div>
+
+      <div style="padding:14px 0">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+          <span class="pill pill-e">EaseGov</span>
+          <span class="badge badge-gray">Contexto</span>
+        </div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">Inversión GovTech cae 72% en Q1 2026 — mercado se consolida</div>
+        <div style="font-size:13px;color:#374151;line-height:1.5">Solo $156M en 11 rondas de funding (vs ~$557M en Q1 2025). Sin embargo, Veritas Capital levantó $14.4B para tecnología gubernamental. Menos startups captando dinero, más capital concentrado en players establecidos como GovPlus.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Tracxn GovTech 2026 · Fuente: CI_EaseGov.md</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HIPOTESIS -->
+  <div id="intel-hipotesis" class="intel-pane" style="display:none">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">Hipótesis de producto derivadas del CI — Semana 28 Jun – 4 Jul 2026</div>
+        <div class="card-sub">Para validar en discovery. Fuente: CI_EaseGov.md · CI_Passports.md</div>
+      </div>
+
+      <div class="opp-card">
+        <div class="opp-num-wrap opp-num-1">1</div>
+        <div>
+          <div class="pill pill-e" style="margin-bottom:6px">EaseGov</div>
+          <div class="opp-title">Si GovPlus lanza Renewal Watch → EaseGov debería validar si el tracking de vencimientos de documentos es un driver de retención real</div>
+          <div class="opp-desc">GovPlus ha lanzado Renewal Watch como feature destacada de retención. Si este feature reduce el churn en GovPlus, EaseGov podría priorizar algo equivalente para mejorar su NSM (usuarios Premium activos con ≥1 servicio completado / 30 días).</div>
+          <div class="opp-tags">
+            <span class="opp-tag impact-high">KR: Reducción churn / usuarios activos 30 días</span>
+            <span class="opp-tag effort-med">Validar: entrevistas usuarios activos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="opp-card">
+        <div class="opp-num-wrap opp-num-2">2</div>
+        <div>
+          <div class="pill pill-e" style="margin-bottom:6px">EaseGov</div>
+          <div class="opp-title">Si GovPlus lanza Expert Services como upsell de alto valor → EaseGov puede explorar un tier "EaseGov Pro" con expertos</div>
+          <div class="opp-desc">GovPlus añade 7 verticales profesionalizadas (veteranos, SSDI, FEMA...). EaseGov podría diferenciarse por precio accesible ($89.99 base) + escalada selectiva a expertos o partners para trámites complejos, sin necesitar el catálogo completo de GovPlus.</div>
+          <div class="opp-tags">
+            <span class="opp-tag impact-high">KR: ARPU / usuarios Premium activos</span>
+            <span class="opp-tag effort-med">Esfuerzo: Alto (partners legales/expertos)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="opp-card">
+        <div class="opp-num-wrap opp-num-3">3</div>
+        <div>
+          <div class="pill pill-p" style="margin-bottom:6px">Passports</div>
+          <div class="opp-title">Si entry.com captura leads con contenido editorial oportuno → mypassporthub debería publicar contenido sobre el pasaporte America250 esta semana</div>
+          <div class="opp-desc">Entry.com captura leads de alta intención alrededor de eventos de alto tráfico (July 4th, pasaporte conmemorativo). mypassporthub no necesita vender el pasaporte conmemorativo: basta publicar contenido informativo para capturar tráfico y redirigir al funnel de Expedited.</div>
+          <div class="opp-tags">
+            <span class="opp-tag impact-high">KR: NSM — Aplicaciones completadas/semana</span>
+            <span class="opp-tag effort-low">Esfuerzo: Bajo (contenido editorial urgente)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="opp-card">
+        <div class="opp-num-wrap" style="background:var(--blue-bg);color:var(--blue);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0">4</div>
+        <div>
+          <div class="pill pill-p" style="margin-bottom:6px">Passports</div>
+          <div class="opp-title">Si ETIAS se lanza en Q4 2026 → campañas "ETIAS-ready passport" en septiembre-octubre para capturar demanda anticipada</div>
+          <div class="opp-desc">Todos los ciudadanos estadounidenses necesitarán ETIAS (€20) para entrar al espacio Schengen a partir de Q4 2026. Esto podría generar una ola de renovaciones de pasaporte en septiembre-octubre entre viajeros a Europa — nuevo segmento de demanda para mypassporthub.</div>
+          <div class="opp-tags">
+            <span class="opp-tag impact-med">KR: NSM — nuevo segmento de demanda</span>
+            <span class="opp-tag effort-low">Esfuerzo: Bajo (campaña SEM + contenido)</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 </div>
 
+
 </div><!-- /main -->
 
 <script>
+
+function showIntel(tab) {
+  document.querySelectorAll('.intel-pane').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('[id^="itab-"]').forEach(b => {
+    b.style.background = 'var(--surface)'; b.style.color = 'var(--text)';
+  });
+  document.getElementById('intel-' + tab).style.display = 'block';
+  const btn = document.getElementById('itab-' + tab);
+  if(btn) { btn.style.background = '#1a1a1a'; btn.style.color = '#fff'; }
+}
+
 function go(id, el) {
   document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
