@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR Tracker Updater — Product Review</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #fff;
+    --border: #e8e6e1;
+    --text: #1a1a1a;
+    --muted: #737373;
+    --blue: #2563eb;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --red: #dc2626;
+    --yellow: #d97706;
+    --yellow-bg: #fffbeb;
+    --purple: #7c3aed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
+  .header {
+    background: #1a1a1a; color: #fff;
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-title { font-size: 15px; font-weight: 700; }
+  .header-sub { font-size: 11px; color: #737373; margin-top: 2px; }
+  .header-badge { background: #2563eb; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+
+  .main { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #1a1a1a; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .step-num.done { background: var(--green); }
+  .step-num.active { background: var(--blue); }
+  .step-title { font-size: 15px; font-weight: 700; }
+  .step-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg);
+  }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--blue); background: #eff6ff; }
+  .upload-zone input { display: none; }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-label { font-size: 14px; font-weight: 600; color: var(--text); }
+  .upload-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .field input {
+    border: 1px solid var(--border); border-radius: 7px;
+    padding: 8px 12px; font-size: 13px; font-family: inherit;
+    outline: none; width: 100%;
+  }
+  .field input:focus { border-color: var(--blue); }
+  .field input[type="password"] { font-family: monospace; letter-spacing: 2px; }
+  .field-hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .preview-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .preview-table th { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--muted); padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+  .preview-table td { padding: 7px 10px; border-bottom: 1px solid #f3f4f6; font-variant-numeric: tabular-nums; }
+  .preview-table tr:last-child td { border-bottom: none; }
+  .preview-table tr.latest td { background: #eff6ff; font-weight: 600; }
+  .up { color: var(--green); } .down { color: var(--red); } .num { text-align: right; }
+
+  .pill { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .pill-p { background: #eff6ff; color: var(--blue); }
+  .pill-e { background: #f5f3ff; color: var(--purple); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 8px; border: none;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit; transition: all 0.15s;
+  }
+  .btn-primary { background: #1a1a1a; color: #fff; }
+  .btn-primary:hover { background: #333; }
+  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+  .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+
+  .log {
+    background: #1a1a1a; border-radius: 8px;
+    padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px; line-height: 1.8; max-height: 280px;
+    overflow-y: auto; color: #e5e5e5;
+  }
+  .log .ok { color: #4ade80; }
+  .log .err { color: #f87171; }
+  .log .info { color: #93c5fd; }
+  .log .warn { color: #fbbf24; }
+
+  .alert { border-radius: 8px; padding: 12px 14px; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+  .alert-green { background: var(--green-bg); border-left: 3px solid var(--green); }
+  .alert-yellow { background: var(--yellow-bg); border-left: 3px solid var(--yellow); }
+
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 10px; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .hidden { display: none; }
+  .progress-bar { height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .progress-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">⚡ CR Tracker Updater</div>
+    <div class="header-sub">Product Review — Passports & EaseGov</div>
+  </div>
+  <span class="header-badge">→ GitHub Pages</span>
+</div>
+
+<div class="main">
+
+  <!-- STEP 1: UPLOAD -->
+  <div class="step" id="step1">
+    <div class="step-header">
+      <div class="step-num active" id="num1">1</div>
+      <div>
+        <div class="step-title">Sube el CR Tracker actualizado</div>
+        <div class="step-sub">Archivo Excel con las hojas Passports, EaseGov y RAW</div>
+      </div>
+    </div>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+      ondragover="handleDrag(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+      <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(event)">
+      <div class="upload-icon">📊</div>
+      <div class="upload-label">Haz clic o arrastra el Excel aquí</div>
+      <div class="upload-sub">CR_Tracker___EaseGov___Passports.xlsx</div>
+    </div>
+  </div>
+
+  <!-- STEP 2: PREVIEW -->
+  <div class="step hidden" id="step2">
+    <div class="step-header">
+      <div class="step-num" id="num2">2</div>
+      <div>
+        <div class="step-title">Datos extraídos — Verifica antes de publicar</div>
+        <div class="step-sub" id="preview-week-label"></div>
+      </div>
+    </div>
+    <div id="preview-content"></div>
+  </div>
+
+  <!-- STEP 3: CONFIG -->
+  <div class="step hidden" id="step3">
+    <div class="step-header">
+      <div class="step-num" id="num3">3</div>
+      <div>
+        <div class="step-title">Configuración GitHub</div>
+        <div class="step-sub">Token y repositorio para el push</div>
+      </div>
+    </div>
+    <div class="config-grid">
+      <div class="field" style="grid-column: span 2">
+        <label>GitHub Personal Access Token (classic)</label>
+        <input type="password" id="gh-token" placeholder="ghp_..." value="">
+        <div class="field-hint">Settings → Developer settings → Personal access tokens → Tokens (classic) · scope: repo</div>
+      </div>
+      <div class="field">
+        <label>Propietario del repo</label>
+        <input type="text" id="gh-owner" value="anatech-hash">
+      </div>
+      <div class="field">
+        <label>Nombre del repo</label>
+        <input type="text" id="gh-repo" value="passports-product-review">
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: PUBLISH -->
+  <div class="step hidden" id="step4">
+    <div class="step-header">
+      <div class="step-num" id="num4">4</div>
+      <div>
+        <div class="step-title">Publicar en GitHub Pages</div>
+        <div class="step-sub">El dashboard se actualizará automáticamente</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <button class="btn btn-primary" id="publish-btn" onclick="publishUpdate()">
+        🚀 Publicar actualización
+      </button>
+      <button class="btn btn-secondary" onclick="resetAll()">↩ Volver a empezar</button>
+    </div>
+    <div class="progress-bar hidden" id="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="log hidden" id="log"></div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════ STATE ═══════════════════════
+let extractedData = null;
+let originalHtml = null;
+
+// ═══════════════════════ DRAG & DROP ═══════════════════════
+function handleDrag(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag');
+}
+function handleDragLeave(e) {
+  document.getElementById('uploadZone').classList.remove('drag');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+}
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+// ═══════════════════════ EXCEL PROCESSING ═══════════════════════
+function processFile(file) {
+  log('info', `📂 Leyendo: ${file.name} (${(file.size/1024).toFixed(0)} KB)`);
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array', cellDates: true });
+      extractedData = extractData(wb);
+      showPreview(extractedData);
+    } catch(err) {
+      alert('Error al leer el Excel: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function extractData(wb) {
+  const result = { passports: [], easegov: [], easegov_products: [], week_label: '' };
+
+  // ── PASSPORTS ──
+  const ppSheet = wb.Sheets['Passports'] || wb.Sheets['PASSPORTS'];
+  if (ppSheet) {
+    const rows = XLSX.utils.sheet_to_json(ppSheet, { header: 1, raw: false });
+    // Buscar filas con datos (skip headers)
+    let dataRows = [];
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      // Fila de datos: primera celda tiene semana o fecha
+      if (r[1] && r[2] && r[3] && !isNaN(parseFloat(String(r[3]).replace(',','.')))) {
+        dataRows.push(r);
+      }
+    }
+    // Últimas 4 semanas con datos
+    const last4 = dataRows.slice(-4);
+    result.passports = last4.map((r, idx) => {
+      const prev = idx > 0 ? last4[idx-1] : null;
+      const crGlobal = parseFloat(String(r[10] || '0').replace('%','').replace(',','.'));
+      const prevCrGlobal = prev ? parseFloat(String(prev[10] || '0').replace('%','').replace(',','.')) : null;
+      return {
+        semana: formatWeek(r[1], r[2]),
+        apps: fmtNum(r[3]),
+        payments: fmtNum(r[4]),
+        ventas: fmtNum(r[5]),
+        cr_step1: fmtPct(r[6]),
+        cr_step2: fmtPct(r[8]),
+        cr_global: fmtPct(r[10]),
+        delta: prevCrGlobal !== null ? (crGlobal - prevCrGlobal).toFixed(2) : null,
+        is_latest: idx === last4.length - 1
+      };
+    });
+  }
+
+  // ── EASEGOV ──
+  const egSheet = wb.Sheets['EaseGov'] || wb.Sheets['EASEGOV'];
+  if (egSheet) {
+    const rows = XLSX.utils.sheet_to_json(egSheet, { header: 1, raw: false });
+    let dataRows = [];
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      if (r[1] && r[2] && r[3] && !isNaN(parseFloat(String(r[3]).replace(',','.')))) {
+        dataRows.push(r);
+      }
+    }
+    const last4 = dataRows.slice(-4);
+    result.easegov = last4.map((r, idx) => {
+      const prev = idx > 0 ? last4[idx-1] : null;
+      const crGlobal = parseFloat(String(r[10] || '0').replace('%','').replace(',','.'));
+      const prevCrGlobal = prev ? parseFloat(String(prev[10] || '0').replace('%','').replace(',','.')) : null;
+      return {
+        semana: formatWeek(r[1], r[2]),
+        apps: fmtNum(r[3]),
+        payments: fmtNum(r[4]),
+        ventas: fmtNum(r[5]),
+        cr_step1: fmtPct(r[6]),
+        cr_step2: fmtPct(r[8]),
+        cr_global: fmtPct(r[10]),
+        delta: prevCrGlobal !== null ? (crGlobal - prevCrGlobal).toFixed(2) : null,
+        is_latest: idx === last4.length - 1
+      };
+    });
+  }
+
+  // ── RAW — productos EaseGov última semana ──
+  const rawSheet = wb.Sheets['RAW'] || wb.Sheets['Raw'];
+  if (rawSheet) {
+    const rows = XLSX.utils.sheet_to_json(rawSheet, { header: 1, raw: false });
+    // Buscar la última semana disponible
+    let allDates = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (r[0] && r[1]) allDates.push(r[1]);
+    }
+    const lastDate = allDates.sort().reverse()[0];
+    // Agrupar por tipo de producto
+    const products = {};
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (r[1] !== lastDate) continue;
+      const type = r[3] || 'Other';
+      if (!products[type]) products[type] = { apps: 0, ventas: 0 };
+      products[type].apps += parseFloat(String(r[4] || '0').replace(',','.')) || 0;
+      products[type].ventas += parseFloat(String(r[6] || '0').replace(',','.')) || 0;
+    }
+    result.easegov_products = Object.entries(products).map(([name, d]) => ({
+      name, apps: Math.round(d.apps), ventas: Math.round(d.ventas),
+      ratio: d.apps > 0 ? ((d.ventas/d.apps)*100).toFixed(2)+'%' : '—'
+    })).sort((a,b) => b.ventas - a.ventas);
+  }
+
+  // Week label
+  if (result.passports.length > 0) {
+    result.week_label = result.passports[result.passports.length-1].semana;
+  }
+
+  return result;
+}
+
+function formatWeek(d1, d2) {
+  if (!d1) return '—';
+  const f = (d) => {
+    if (!d) return '';
+    const parts = String(d).split('/');
+    if (parts.length === 3) {
+      const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      return `${parts[0]} ${months[parseInt(parts[1])-1]}`;
+    }
+    return String(d).substring(0,10);
+  };
+  return `${f(d1)} – ${f(d2)}`;
+}
+
+function fmtNum(v) {
+  if (!v) return '—';
+  const n = parseFloat(String(v).replace(',','.'));
+  return isNaN(n) ? '—' : Math.round(n).toLocaleString('es-ES');
+}
+
+function fmtPct(v) {
+  if (!v) return '—';
+  const s = String(v).replace('%','').replace(',','.');
+  const n = parseFloat(s);
+  return isNaN(n) ? '—' : n.toFixed(2)+'%';
+}
+
+// ═══════════════════════ PREVIEW ═══════════════════════
+function showPreview(data) {
+  document.getElementById('step2').classList.remove('hidden');
+  document.getElementById('step3').classList.remove('hidden');
+  document.getElementById('step4').classList.remove('hidden');
+  document.getElementById('num1').classList.add('done');
+  document.getElementById('num2').classList.add('active');
+  document.getElementById('preview-week-label').textContent = `Semana más reciente: ${data.week_label}`;
+
+  let html = '';
+
+  // Passports table
+  html += `<div class="section-label"><span class="pill pill-p">Passports</span> — Últimas 4 semanas</div>`;
+  html += `<table class="preview-table" style="margin-bottom:20px">
+    <thead><tr><th>Semana</th><th class="num">Apps</th><th class="num">Ventas</th><th class="num">Step 1</th><th class="num">Step 2</th><th class="num">CR Global</th><th class="num">vs ant.</th></tr></thead><tbody>`;
+  data.passports.forEach(r => {
+    const deltaStr = r.delta !== null ? (parseFloat(r.delta) >= 0 ? `<span class="up">+${r.delta}pp</span>` : `<span class="down">${r.delta}pp</span>`) : '—';
+    html += `<tr class="${r.is_latest ? 'latest' : ''}">
+      <td>${r.semana}</td>
+      <td class="num">${r.apps}</td><td class="num">${r.ventas}</td>
+      <td class="num">${r.cr_step1}</td><td class="num">${r.cr_step2}</td>
+      <td class="num"><strong>${r.cr_global}</strong></td>
+      <td class="num">${deltaStr}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+
+  // EaseGov table
+  html += `<div class="section-label"><span class="pill pill-e">EaseGov</span> — Últimas 4 semanas</div>`;
+  html += `<table class="preview-table" style="margin-bottom:20px">
+    <thead><tr><th>Semana</th><th class="num">Apps</th><th class="num">Ventas</th><th class="num">Step 1</th><th class="num">Step 2</th><th class="num">CR Global</th><th class="num">vs ant.</th></tr></thead><tbody>`;
+  data.easegov.forEach(r => {
+    const deltaStr = r.delta !== null ? (parseFloat(r.delta) >= 0 ? `<span class="up">+${r.delta}pp</span>` : `<span class="down">${r.delta}pp</span>`) : '—';
+    html += `<tr class="${r.is_latest ? 'latest' : ''}">
+      <td>${r.semana}</td>
+      <td class="num">${r.apps}</td><td class="num">${r.ventas}</td>
+      <td class="num">${r.cr_step1}</td><td class="num">${r.cr_step2}</td>
+      <td class="num"><strong>${r.cr_global}</strong></td>
+      <td class="num">${deltaStr}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+
+  // Productos EaseGov
+  if (data.easegov_products.length > 0) {
+    html += `<div class="section-label"><span class="pill pill-e">EaseGov</span> por producto — semana más reciente</div>`;
+    html += `<table class="preview-table"><thead><tr><th>Producto</th><th class="num">Apps</th><th class="num">Ventas</th><th class="num">Ratio</th></tr></thead><tbody>`;
+    data.easegov_products.forEach(p => {
+      html += `<tr><td>${p.name}</td><td class="num">${p.apps.toLocaleString('es-ES')}</td><td class="num">${p.ventas.toLocaleString('es-ES')}</td><td class="num"><strong>${p.ratio}</strong></td></tr>`;
+    });
+    html += '</tbody></table>';
+  }
+
+  document.getElementById('preview-content').innerHTML = html;
+  document.getElementById('log').classList.remove('hidden');
+  log('ok', `✅ Datos extraídos correctamente — semana ${data.week_label}`);
+}
+
+// ═══════════════════════ GITHUB PUBLISH ═══════════════════════
+async function publishUpdate() {
+  const token = document.getElementById('gh-token').value.trim();
+  const owner = document.getElementById('gh-owner').value.trim();
+  const repo = document.getElementById('gh-repo').value.trim();
+
+  if (!token) { alert('Introduce el GitHub Token'); return; }
+  if (!extractedData) { alert('Primero sube el Excel'); return; }
+
+  const btn = document.getElementById('publish-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Publicando...';
+
+  const progressBar = document.getElementById('progress-bar');
+  const progressFill = document.getElementById('progress-fill');
+  progressBar.classList.remove('hidden');
+
+  setProgress(10);
+  log('info', '🔄 Descargando index.html actual de GitHub...');
+
+  try {
+    // 1. Obtener el archivo actual
+    const getResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/index.html`, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    const getJson = await getResp.json();
+    if (!getJson.sha) throw new Error('No se pudo obtener el archivo: ' + (getJson.message || 'error'));
+    const sha = getJson.sha;
+    log('ok', `✅ SHA obtenido: ${sha.substring(0,7)}...`);
+    setProgress(25);
+
+    // 2. Decodificar el HTML
+    log('info', '🔄 Decodificando HTML...');
+    const currentHtml = atob(getJson.content.replace(/\n/g,''));
+    setProgress(40);
+
+    // 3. Actualizar el HTML con los nuevos datos
+    log('info', '🔄 Actualizando datos en el dashboard...');
+    const updatedHtml = updateDashboardHtml(currentHtml, extractedData);
+    setProgress(60);
+
+    // 4. Codificar y hacer push
+    log('info', '🔄 Subiendo a GitHub...');
+    const newContent = btoa(unescape(encodeURIComponent(updatedHtml)));
+    const latest = extractedData.passports[extractedData.passports.length - 1];
+    const commitMsg = `CR Tracker actualizado — ${extractedData.week_label} — PP ${latest.ventas} ventas`;
+
+    const putResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/index.html`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message: commitMsg, content: newContent, sha })
+    });
+    const putJson = await putResp.json();
+    if (!putJson.commit) throw new Error('Push fallido: ' + (putJson.message || 'error'));
+
+    setProgress(100);
+    log('ok', `✅ PUBLICADO · Commit: ${putJson.commit.sha.substring(0,7)}`);
+    log('ok', `🌐 https://${owner}.github.io/${repo}/ — disponible en ~1 min`);
+    btn.textContent = '✅ Publicado';
+    btn.style.background = '#16a34a';
+
+  } catch(err) {
+    log('err', `❌ Error: ${err.message}`);
+    btn.disabled = false;
+    btn.textContent = '🚀 Publicar actualización';
+  }
+}
+
+function updateDashboardHtml(html, data) {
+  if (!data.passports.length || !data.easegov.length) return html;
+
+  const pp = data.passports;
+  const eg = data.easegov;
+  const ppLatest = pp[pp.length - 1];
+  const egLatest = eg[eg.length - 1];
+  const ppPrev = pp.length > 1 ? pp[pp.length - 2] : null;
+  const egPrev = eg.length > 1 ? eg[eg.length - 2] : null;
+
+  const weekLabel = data.week_label;
+
+  // Extraer números limpios
+  const ppVentas = ppLatest.ventas.replace('.','');
+  const egVentas = egLatest.ventas.replace('.','');
+  const ppApps = ppLatest.apps.replace('.','');
+  const egApps = egLatest.apps.replace('.','');
+  const ppCrGlobal = ppLatest.cr_global;
+  const egCrGlobal = egLatest.cr_global;
+
+  // Delta dirección
+  const ppDelta = ppLatest.delta !== null ? parseFloat(ppLatest.delta) : 0;
+  const egDelta = egLatest.delta !== null ? parseFloat(egLatest.delta) : 0;
+  const ppVentasPrev = ppPrev ? ppPrev.ventas : '—';
+  const egVentasPrev = egPrev ? egPrev.ventas : '—';
+
+  // Actualizar título de sección ventas
+  html = html.replace(
+    /💰 Ventas — Semana [^<]+</,
+    `💰 Ventas — Semana ${weekLabel}<`
+  );
+
+  // Actualizar título KPIs
+  html = html.replace(
+    /📊 KPIs de negocio — Semana [^<]+</,
+    `📊 KPIs de negocio — Semana ${weekLabel}<`
+  );
+
+  // Actualizar topbar sync date
+  const today = new Date();
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const dateStr = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+  html = html.replace(/Sincronizado · [^<]+</, `Sincronizado · ${dateStr}<`);
+
+  // Tabla CR Tracker Passports — reconstruir con los 4 períodos
+  const ppTableRows = pp.map((r, i) => {
+    const isLatest = i === pp.length - 1;
+    const deltaStr = r.delta !== null
+      ? (parseFloat(r.delta) >= 0 ? `<span style="color:var(--green)">+${r.delta}pp</span>` : `<span style="color:var(--red)">${r.delta}pp</span>`)
+      : '—';
+    return `<tr${isLatest ? ' style="background:#eff6ff"' : ''}>
+      <td>${r.semana}</td>
+      <td class="num">${r.apps}</td><td class="num">${r.ventas}</td>
+      <td class="num">${r.cr_step1}</td><td class="num">${r.cr_step2}</td>
+      <td class="num" style="${isLatest?'color:var(--blue);font-weight:800':''}">${r.cr_global}</td>
+      <td class="num">${deltaStr}</td>
+    </tr>`;
+  }).join('\n');
+
+  const egTableRows = eg.map((r, i) => {
+    const isLatest = i === eg.length - 1;
+    const deltaStr = r.delta !== null
+      ? (parseFloat(r.delta) >= 0 ? `<span style="color:var(--green)">+${r.delta}pp</span>` : `<span style="color:var(--red)">${r.delta}pp</span>`)
+      : '—';
+    return `<tr${isLatest ? ' style="background:#f5f3ff"' : ''}>
+      <td>${r.semana}</td>
+      <td class="num">${r.apps}</td><td class="num">${r.ventas}</td>
+      <td class="num">${r.cr_step1}</td><td class="num">${r.cr_step2}</td>
+      <td class="num" style="${isLatest?'color:var(--purple);font-weight:800':''}">${r.cr_global}</td>
+      <td class="num">${deltaStr}</td>
+    </tr>`;
+  }).join('\n');
+
+  // Reemplazar tablas usando marcadores únicos
+  html = html.replace(
+    /(<thead>\s*<tr><th>Semana<\/th><th>Apps<\/th><th>Ventas<\/th><th>Step 1<\/th><th>Step 2<\/th><th>Apps\/Ventas<\/th><th>vs ant\.<\/th><\/tr>\s*<\/thead>\s*<tbody>)([\s\S]*?)(<\/tbody>)/,
+    `$1\n${ppTableRows}\n$3`
+  );
+
+  // Segunda tabla (EaseGov) — segunda ocurrencia
+  let count = 0;
+  html = html.replace(
+    /(<thead>\s*<tr><th>Semana<\/th><th>Apps<\/th><th>Ventas<\/th><th>Step 1<\/th><th>Step 2<\/th><th>Apps\/Ventas<\/th><th>vs ant\.<\/th><\/tr>\s*<\/thead>\s*<tbody>)([\s\S]*?)(<\/tbody>)/g,
+    (match, p1, p2, p3) => {
+      count++;
+      if (count === 2) return `${p1}\n${egTableRows}\n${p3}`;
+      return match;
+    }
+  );
+
+  return html;
+}
+
+// ═══════════════════════ UTILS ═══════════════════════
+function setProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+function log(type, msg) {
+  const logEl = document.getElementById('log');
+  logEl.classList.remove('hidden');
+  const line = document.createElement('div');
+  line.className = type;
+  line.textContent = msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function resetAll() {
+  extractedData = null;
+  document.getElementById('step2').classList.add('hidden');
+  document.getElementById('step3').classList.add('hidden');
+  document.getElementById('step4').classList.add('hidden');
+  document.getElementById('num1').classList.remove('done');
+  document.getElementById('num2').classList.remove('active');
+  document.getElementById('log').innerHTML = '';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('progress-bar').classList.add('hidden');
+  document.getElementById('progress-fill').style.width = '0%';
+  const btn = document.getElementById('publish-btn');
+  btn.disabled = false;
+  btn.textContent = '🚀 Publicar actualización';
+  btn.style.background = '';
+}
+</script>
+</body>
+</html>
